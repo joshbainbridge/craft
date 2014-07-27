@@ -2,6 +2,7 @@
 
 #include <craft/shaderProgram.hpp>
 #include <craft/settings.hpp>
+#include <craft/simplex.hpp>
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -126,20 +127,33 @@ int main(void)
 		2, 4, 6
 	};
 	
-	/*GLfloat position[] = {
-		-0.5f, 0.5f, 0.0f,
-		0.5f, 0.5f, 0.2f,
-		0.5f, -0.5f, 0.4f,
-		-0.5f, -0.5f, 0.6f
-	};*/
-	GLfloat position[3000];
-	for (int i = 0; i < 3000; i += 3) {
-		int x = i % 10;
-		int y = int((float) i * 0.1) % 10;
-		int z = int((float) i * 0.01) % 10;
-		position[i] = 1.0f * x - 5;
-		position[i+1] = 1.0f * y - 5;
-		position[i+2] = 1.0f * z - 5;
+	GLfloat data[100][100][10];
+	for (int i = 0; i < 100; i += 1) {
+		for (int j = 0; j < 100; j += 1) {
+			for (int k = 0; k < 10; k += 1) {
+				
+				data[i][j][k] = simplex_noise(2, (float) i * 0.05f, (float) j * 0.05f, (float) k * 0.05f) + ((float) k - 5) * 0.2;
+				
+			}
+		}
+	}
+	
+	int count = 0;
+	GLfloat position[300000];
+	for (int i = 0; i < 100; i += 1) {
+		for (int j = 0; j < 100; j += 1) {
+			for (int k = 0; k < 10; k += 1) {
+				if (data[i][j][k] < 0) {
+					if ( data[(i + 1) % 100][j][k] < 0 && data[(i - 1) % 100][j][k] < 0 && data[i][(j + 1) % 100][k] < 0 && data[i][(j - 1) % 100][k] < 0 && data[i][j][(k + 1) % 10] < 0 && data[i][j][(k - 1) % 10] < 0 ) {
+					} else {
+						position[count] = i - 50;
+						position[count + 1] = j - 50;
+						position[count + 2] = k - 5;
+						count += 3;
+					}
+				}
+			}
+		}
 	}
 	
 	//Attribute Buffer
@@ -209,12 +223,39 @@ int main(void)
 	double looptime;
 	double framerate = (double) 1 / 60;
 	float looplength = 0;
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	
     while (!glfwWindowShouldClose(window))
     {
 		glfwSetTime((double) 0);
 		looplength++;
+		
+		for (int i = 0; i < 100; i += 1) {
+			for (int j = 0; j < 100; j += 1) {
+				for (int k = 0; k < 10; k += 1) {
+					
+					data[i][j][k] = simplex_noise(1, (float) i * 0.05f + (float) looplength * 0.01f, (float) j * 0.05f, (float) k * 0.05f) + ((float) k - 5) * 0.2;
+					
+				}
+			}
+		}
+		
+		int count = 0;
+		for (int i = 0; i < 100; i += 1) {
+			for (int j = 0; j < 100; j += 1) {
+				for (int k = 0; k < 10; k += 1) {
+					if (data[i][j][k] < 0) {
+						if ( data[(i + 1) % 100][j][k] < 0 && data[(i - 1) % 100][j][k] < 0 && data[i][(j + 1) % 100][k] < 0 && data[i][(j - 1) % 100][k] < 0 && data[i][j][(k + 1) % 10] < 0 && data[i][j][(k - 1) % 10] < 0 ) {
+						} else {
+							position[count] = i - 50;
+							position[count + 1] = j - 50;
+							position[count + 2] = k - 5;
+							count += 3;
+						}
+					}
+				}
+			}
+		}
 		
 		view = glm::lookAt(
 			glm::vec3(x_pos, y_pos, z_pos),
@@ -228,16 +269,18 @@ int main(void)
 		glUniform1f(alpha, glm::sin(looplength * 0.025)*0.1+0.9);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
-		for (int i = 0; i < 3000; i += 3) {
+		/*
+		for (int i = 0; i < count; i += 3) {
 			position[i+2] += glm::sin(looplength * 0.04 + (position[i]*position[i+1])*0.1)*0.02;
 		}
+		*/
 		glBufferData(GL_ARRAY_BUFFER, sizeof(position), position, GL_STREAM_DRAW);
 		
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, 1000);
+		glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, count / 3);
         
         glfwSwapBuffers(window);
 		looptime = glfwGetTime();

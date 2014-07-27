@@ -10,21 +10,22 @@ SET( PROJ_SOURCES
 	${SRC}/main.cpp
 	${SRC}/shaderProgram.cpp
 	${SRC}/settings.cpp
+	${SRC}/simplex.c
 	)
 SET( PROJ_HEADERS
 	${INC}/${CMAKE_PROJECT_NAME}/platformSpecification.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/shaderProgram.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/settings.hpp
-	${INC}/${CMAKE_PROJECT_NAME}/foo.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/simplex.hpp
 	)
-
-SET(CMAKE_CXX_FLAGS "-std=c++11")
 
 ADD_EXECUTABLE( ${CMAKE_PROJECT_NAME} ${PROJ_SOURCES} ${PROJ_HEADERS} )
 
 FIND_PACKAGE( OpenGL REQUIRED )
 FIND_PACKAGE( GLFW REQUIRED )
 FIND_PACKAGE( GLM REQUIRED )
+
+SET(CMAKE_CXX_FLAGS "-std=c++11")
 
 IF( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
 	
