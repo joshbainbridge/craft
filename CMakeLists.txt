@@ -11,12 +11,16 @@ SET( PROJ_SOURCES
 	${SRC}/shaderProgram.cpp
 	${SRC}/settings.cpp
 	${SRC}/simplex.c
+	${SRC}/segment.cpp
+	${SRC}/chunk.cpp
 	)
 SET( PROJ_HEADERS
 	${INC}/${CMAKE_PROJECT_NAME}/platformSpecification.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/shaderProgram.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/settings.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/simplex.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/segment.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/chunk.hpp
 	)
 
 ADD_EXECUTABLE( ${CMAKE_PROJECT_NAME} ${PROJ_SOURCES} ${PROJ_HEADERS} )

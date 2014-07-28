@@ -110,7 +110,7 @@ float noise(float xin, float yin, float zin){
 
     return 16.0*(n0 + n1 + n2 + n3)+1.0;
 }
-
+/*
 float simplex_noise(int octaves, float x, float y, float z){
     float value = 0.0;
     int i;
@@ -121,5 +121,25 @@ float simplex_noise(int octaves, float x, float y, float z){
             z*pow(2, i)
         ) - 1;
     }
+    return value;
+}
+*/
+float simplex_noise( int o, float x, float y, float z, float s, float a)
+{
+    float value = 0;
+    float m, w;
+    int i;
+    
+    for (i = 0; i < o; i++) {
+        
+        a = pow( a, i );
+        
+        m = s / pow( 2, i );
+        w = 1.0 / m;
+        
+        value += ( noise(x*w,y*w,z*w) - 1 ) * a;
+        
+    }
+    
     return value;
 }

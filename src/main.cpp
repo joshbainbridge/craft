@@ -127,28 +127,28 @@ int main(void)
 		2, 4, 6
 	};
 	
-	GLfloat data[100][100][10];
-	for (int i = 0; i < 100; i += 1) {
-		for (int j = 0; j < 100; j += 1) {
-			for (int k = 0; k < 10; k += 1) {
+	GLfloat data[16][16][16];
+	for (int i = 0; i < 16; i += 1) {
+		for (int j = 0; j < 16; j += 1) {
+			for (int k = 0; k < 16; k += 1) {
 				
-				data[i][j][k] = simplex_noise(2, (float) i * 0.05f, (float) j * 0.05f, (float) k * 0.05f) + ((float) k - 5) * 0.2;
+				data[i][j][k] = simplex_noise(3, (float) i, (float) j, (float) k, 100.0f, 0.85f) + ((float) k - 8) * 0.2;
 				
 			}
 		}
 	}
 	
 	int count = 0;
-	GLfloat position[300000];
-	for (int i = 0; i < 100; i += 1) {
-		for (int j = 0; j < 100; j += 1) {
-			for (int k = 0; k < 10; k += 1) {
+	GLfloat position[4096];
+	for (int i = 0; i < 16; i += 1) {
+		for (int j = 0; j < 16; j += 1) {
+			for (int k = 0; k < 16; k += 1) {
 				if (data[i][j][k] < 0) {
-					if ( data[(i + 1) % 100][j][k] < 0 && data[(i - 1) % 100][j][k] < 0 && data[i][(j + 1) % 100][k] < 0 && data[i][(j - 1) % 100][k] < 0 && data[i][j][(k + 1) % 10] < 0 && data[i][j][(k - 1) % 10] < 0 ) {
+					if ( data[(i + 1) % 16][j][k] < 0 && data[(i - 1) % 16][j][k] < 0 && data[i][(j + 1) % 16][k] < 0 && data[i][(j - 1) % 16][k] < 0 && data[i][j][(k + 1) % 16] < 0 && data[i][j][(k - 1) % 16] < 0 ) {
 					} else {
-						position[count] = i - 50;
-						position[count + 1] = j - 50;
-						position[count + 2] = k - 5;
+						position[count] = i - 8;
+						position[count + 1] = j - 8;
+						position[count + 2] = k - 8;
 						count += 3;
 					}
 				}
@@ -195,9 +195,6 @@ int main(void)
 	glVertexAttribDivisor(colAttrib, 0);
 	glVertexAttribDivisor(cenAttrib, 1);
 	
-	GLuint alpha = glGetUniformLocation(shader01.getProg(), "alpha");
-	glUniform1f(alpha, 0.1f);
-	
 	glm::mat4 rotate;
 	GLuint uni_rotate = glGetUniformLocation(shader01.getProg(), "rotate");
 	
@@ -230,33 +227,6 @@ int main(void)
 		glfwSetTime((double) 0);
 		looplength++;
 		
-		for (int i = 0; i < 100; i += 1) {
-			for (int j = 0; j < 100; j += 1) {
-				for (int k = 0; k < 10; k += 1) {
-					
-					data[i][j][k] = simplex_noise(1, (float) i * 0.05f + (float) looplength * 0.01f, (float) j * 0.05f, (float) k * 0.05f) + ((float) k - 5) * 0.2;
-					
-				}
-			}
-		}
-		
-		int count = 0;
-		for (int i = 0; i < 100; i += 1) {
-			for (int j = 0; j < 100; j += 1) {
-				for (int k = 0; k < 10; k += 1) {
-					if (data[i][j][k] < 0) {
-						if ( data[(i + 1) % 100][j][k] < 0 && data[(i - 1) % 100][j][k] < 0 && data[i][(j + 1) % 100][k] < 0 && data[i][(j - 1) % 100][k] < 0 && data[i][j][(k + 1) % 10] < 0 && data[i][j][(k - 1) % 10] < 0 ) {
-						} else {
-							position[count] = i - 50;
-							position[count + 1] = j - 50;
-							position[count + 2] = k - 5;
-							count += 3;
-						}
-					}
-				}
-			}
-		}
-		
 		view = glm::lookAt(
 			glm::vec3(x_pos, y_pos, z_pos),
 			glm::vec3(0.0f, 0.0f, 0.0f),
@@ -266,15 +236,6 @@ int main(void)
 		
 		rotate = glm::rotate(rotate, 0.01f, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(uni_rotate, 1, GL_FALSE, glm::value_ptr(rotate));
-		glUniform1f(alpha, glm::sin(looplength * 0.025)*0.1+0.9);
-		
-		glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
-		/*
-		for (int i = 0; i < count; i += 3) {
-			position[i+2] += glm::sin(looplength * 0.04 + (position[i]*position[i+1])*0.1)*0.02;
-		}
-		*/
-		glBufferData(GL_ARRAY_BUFFER, sizeof(position), position, GL_STREAM_DRAW);
 		
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
