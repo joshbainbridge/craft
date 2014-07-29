@@ -139,19 +139,222 @@ int main(void)
 	}
 	
 	int count = 0;
+	int bi, bj, bk;
+	char w, e, s, n, l, h;
+	char check;
 	GLfloat position[4096];
 	for (int i = 0; i < 16; i += 1) {
 		for (int j = 0; j < 16; j += 1) {
 			for (int k = 0; k < 16; k += 1) {
+				
 				if (data[i][j][k] < 0) {
-					if ( data[(i + 1) % 16][j][k] < 0 && data[(i - 1) % 16][j][k] < 0 && data[i][(j + 1) % 16][k] < 0 && data[i][(j - 1) % 16][k] < 0 && data[i][j][(k + 1) % 16] < 0 && data[i][j][(k - 1) % 16] < 0 ) {
-					} else {
+					
+					check = 1;
+					
+					for (int ri = -1; ri < 2; ri += 1) {
+						for (int rj = -1; rj < 2; rj += 1) {
+							for (int rk = -1; rk < 2; rk += 1) {
+								if ( ri != 0 || rj != 0 || rk != 0 ) {
+									
+									bi = i + ri;
+									bj = j + rj;
+									bk = k + rk;
+									w = e = s = n = l = h = 0;
+									
+									if ( bi < 0 ) {
+										// Check if West
+										w = 1;
+									}
+									if ( bi > 15 ) {
+										// Check if East
+										e = 1;
+									}
+									if ( bj < 0 ) {
+										// Check if South
+										s = 1;
+									}
+									if ( bj > 15 ) {
+										// Check if North
+										n = 1;
+									}
+									if ( bk < 0 ) {
+										// Check if Lower
+										l = 1;
+									} 
+									if ( bk > 15 ) {
+										// Check if Higher
+										h = 1;
+									}
+									
+									if ( w == 0 && e == 0 && s == 0 && n == 0 && l == 0 && h == 0 ) {
+										
+										// If neighbour is not beyond side, edge or corner
+										if ( data[bi][bj][bk] > 0 ) {
+											// Check if solid
+											check = 0;
+										}
+										
+									} else {
+									
+										if ( w == 1 ) {
+									
+											if ( s == 0 && n == 0 && l == 0 && h == 0 ) {
+												// Check for West chunk
+											} else {
+										
+												if ( s == 1 ) {
+										
+													if ( l == 1 ) {
+														// Check for South West chunk and Lower segment
+													} else if ( h == 1 ) {
+														// Check for South West chunk and Higher segment
+													} else {
+														// Check for South West chunk
+													}
+										
+												} else if ( n == 1 ) {
+										
+													if ( l == 1 ) {
+														// Check for North West chunk and Lower segment
+													} else if ( h == 1 ) {
+														// Check for North West chunk and Higher segment
+													} else {
+														// Check for North West chunk
+													}
+										
+												}
+										
+												if ( l == 1 ) {
+											
+													if ( s == 0 && n == 0 ) {
+														// Check for West chunk and Lower segment
+													}
+										
+												} else if ( h == 1 ) {
+											
+													if ( s == 0 && n == 0 ) {
+														// Check for West chunk and Higher segment
+													}
+										
+												}
+										
+											}
+										
+										} else if ( e == 1 ) {
+									
+											if ( s == 0 && n == 0 && l == 0 && h == 0 ) {
+												// Check for East chunk
+											} else {
+										
+												if ( s == 1 ) {
+										
+													if ( l == 1 ) {
+														// Check for South East chunk and Lower segment
+													} else if ( h == 1 ) {
+														// Check for South East chunk and Higher segment
+													} else {
+														// Check for South East chunk
+													}
+										
+												} else if ( n == 1 ) {
+										
+													if ( l == 1 ) {
+														// Check for North East chunk and Lower segment
+													} else if ( h == 1 ) {
+														// Check for North East chunk and Higher segment
+													} else {
+														// Check for North East chunk
+													}
+										
+												}
+										
+												if ( l == 1 ) {
+											
+													if ( s == 0 && n == 0 ) {
+														// Check for East chunk and Lower segment
+													}
+										
+												} else if ( h == 1 ) {
+											
+													if ( s == 0 && n == 0 ) {
+														// Check for East chunk and Higher segment
+													}
+										
+												}
+										
+											}
+										
+										}
+									
+										if ( s == 1 ) {
+									
+											if ( w == 0 && e == 0 && l == 0 && h == 0 ) {
+												// Check for South chunk
+											} else if ( l == 1 ) {
+											
+												if ( w == 0 && e == 0 ) {
+													// Check for South chunk and Lower segment
+												}
+										
+											} else if ( h == 1 ) {
+											
+												if ( w == 0 && e == 0 ) {
+													// Check for South chunk and Higher segment
+												}
+										
+											}
+										
+										} else if ( n == 1 ) {
+									
+											if ( w == 0 && e == 0 && l == 0 && h == 0 ) {
+												// Check for North chunk
+											} else if ( l == 1 ) {
+											
+												if ( w == 0 && e == 0 ) {
+													// Check for North chunk and Lower segment
+												}
+										
+											} else if ( h == 1 ) {
+											
+												if ( w == 0 && e == 0 ) {
+													// Check for North chunk and Higher segment
+												}
+										
+											}
+										
+										}
+									
+										if ( l == 1 ) {
+									
+											if ( w == 0 && e == 0 && s == 0 && n == 0 ) {
+												// Check for Lower chunk
+											}
+										
+										} else if ( h == 1 ) {
+									
+											if ( w == 0 && e == 0 && s == 0 && n == 0 ) {
+												// Check for Higher chunk
+											}
+										
+										}
+									
+									}
+								}
+							}
+						}
+					}
+					
+					
+					if ( check == 0 ) {
+						// If neighbour is empty
 						position[count] = i - 8;
 						position[count + 1] = j - 8;
 						position[count + 2] = k - 8;
 						count += 3;
 					}
+					
 				}
+				
 			}
 		}
 	}
