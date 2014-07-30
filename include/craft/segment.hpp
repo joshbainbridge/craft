@@ -13,7 +13,6 @@
 	
 		int counter;
 		GLuint vbo;
-		GLuint vao;
 	
 		public:
 			segment ();

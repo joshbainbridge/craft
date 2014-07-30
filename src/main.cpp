@@ -4,12 +4,14 @@
 #include <craft/settings.hpp>
 #include <craft/simplex.hpp>
 #include <craft/segment.hpp>
+
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <cstdlib>
-#include <string>
+
+#include <chrono>
+#include <thread>
 #include <iostream>
 using namespace std;
 
@@ -60,7 +62,6 @@ GLFWwindow* createWindow()
 
     glfwMakeContextCurrent(window);
     
-    glfwSetKeyCallback(window, keyCallback);
 	glfwSwapInterval(0);
 	
 	return window;
@@ -94,6 +95,8 @@ int main(void)
 	}
 	
 	GLFWwindow* window = createWindow();
+	
+    glfwSetKeyCallback(window, keyCallback);
 	
 	errorContext();
 	
@@ -130,7 +133,7 @@ int main(void)
     glBindVertexArray(vao);
     
 	// Shader
-	shaderProgram shader01( "../craft/shaders/vertexShader.vtx", "../craft/shaders/fragmentShader.frg" );
+	shaderProgram shader01( "../Craft-master/shaders/vertexShader.vtx", "../Craft-master/shaders/fragmentShader.frg" );
 	glUseProgram(shader01.getProg());
 	
 	GLuint cenAttrib = glGetAttribLocation(shader01.getProg(), "centre");
@@ -222,12 +225,12 @@ int main(void)
         glfwSwapBuffers(window);
         
 		looptime = glfwGetTime();
-		if (framerate - looptime)
+		if (looptime < framerate)
 		{
-			Sleep( ( framerate - looptime ) * 1000 );
+			this_thread::sleep_for(chrono::milliseconds( (long long) ( ( framerate - looptime ) * 1000 ) ));
 		}
 		
-		//cout << (double) 1 / glfwGetTime() << endl;
+		cout << (double) 1 / glfwGetTime() << endl;
         glfwPollEvents();
     }
 
