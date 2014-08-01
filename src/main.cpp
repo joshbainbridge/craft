@@ -20,8 +20,29 @@ float x_pos = 7.5;
 float y_pos = 7.5;
 float z_pos = 7.5;
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
+GLFWwindow* createWindow() {
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	
+    GLFWwindow* window = glfwCreateWindow(engine_settings.getResX(), engine_settings.getResY(), "Craft", NULL,NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+
+    glfwMakeContextCurrent(window);
+    
+	glfwSwapInterval(0);
+	
+	return window;
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
 		
@@ -44,31 +65,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         z_pos -= 0.5f;
 }
 
-GLFWwindow* createWindow()
-{
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	
-    GLFWwindow* window = glfwCreateWindow(engine_settings.getResX(), engine_settings.getResY(), "Craft", NULL,NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
-    glfwMakeContextCurrent(window);
-    
-	glfwSwapInterval(0);
-	
-	return window;
-}
-
-void errorContext()
-{
+void errorContext() {
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
@@ -86,8 +83,7 @@ void errorContext()
 	#endif
 }
 
-int main(void)
-{
+GLFWwindow* init () {
 	int err = glfwInit();
     if (!err)
 	{
@@ -100,6 +96,10 @@ int main(void)
 	
 	errorContext();
 	
+	return window;
+}
+
+void threadPrimary (GLFWwindow* window) {
 	// Data
 	GLfloat vertices[] = {
 		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
@@ -187,8 +187,7 @@ int main(void)
 	glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
 	
 	//Loop Setup Code
-	double looptime;
-	double framerate = (double) 1 / 60;
+	chrono::milliseconds framerate( 1000 / 60 );
 	
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	
@@ -199,7 +198,7 @@ int main(void)
 	
     while (!glfwWindowShouldClose(window))
     {
-		glfwSetTime((double) 0);
+    	auto start_time = chrono::high_resolution_clock::now();
 		
 		// Camera - Look At
 		view = glm::lookAt(
@@ -223,17 +222,54 @@ int main(void)
         
         // Swap Buffer
         glfwSwapBuffers(window);
+		
+		glfwPollEvents();
         
-		looptime = glfwGetTime();
+		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
 		if (looptime < framerate)
 		{
-			this_thread::sleep_for(chrono::milliseconds( (long long) ( ( framerate - looptime ) * 1000 ) ));
+			this_thread::sleep_for( framerate - looptime );
 		}
 		
-		cout << (double) 1 / glfwGetTime() << endl;
-        glfwPollEvents();
+		//cout << "Primary thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
     }
+}
 
+void threadSecond (GLFWwindow* window) {
+	//Loop Setup Code
+	chrono::milliseconds framerate( 1000 / 30 );
+	
+    while (!glfwWindowShouldClose(window))
+    {
+    	auto start_time = chrono::high_resolution_clock::now();
+		
+		x_pos += 0.1f;
+		
+		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
+		if (looptime < framerate)
+		{
+			this_thread::sleep_for( framerate - looptime );
+		}
+		
+		//cout << "Logic thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+    }
+}
+
+void threadThird (GLFWwindow* window) {
+}
+
+int main(void)
+{
+	GLFWwindow* window = init();
+	
+	thread threadLogic(threadSecond, window);
+	thread threadData(threadThird, window);
+	
+	threadPrimary(window);
+	
+	threadLogic.join();
+	threadData.join();
+	
     glfwDestroyWindow(window);
 
     glfwTerminate();
