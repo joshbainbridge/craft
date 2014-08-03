@@ -5,10 +5,10 @@ This is an independent project which aims to find best practice within visual gr
 
 Required dependencies are:
 
-* CMake 2.8
-* OpenGL 3.3
-* GLFW 3.0
-* GLM
-* GLEW (Windows only)
-* Boost (Not yet required)
-* Awesomium (Not yet required)
+	* CMake 2.8
+	* OpenGL 3.3
+	* GLFW 3.0
+	* GLM
+	* GLEW (Windows only)
+	* Boost (Not yet required)
+	* Awesomium (Not yet required)
