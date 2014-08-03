@@ -274,3 +274,29 @@ void segment::render () {
 	
 	glDrawElementsInstanced( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, counter / 3 );
 }
+
+void segment::update (int xinput, int yinput, int zinput) {
+	xpos = xinput;
+	ypos = yinput;
+	zpos = zinput;
+	
+	dataConstructor( data, xpos, ypos, zpos );
+	counter = bufferConstructor( buffer, data, xpos, ypos, zpos );
+	
+	flag = 1;
+}
+
+void segment::updateBuffer () {
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_STATIC_DRAW);
+	
+	flag = 0;
+}
+
+int segment::getypos () {
+	return ypos;
+}
+
+char segment::getflag () {
+	return flag;
+}

@@ -19,12 +19,14 @@ settings engine_settings;
 float x_pos = 7.5;
 float y_pos = 7.5;
 float z_pos = 7.5;
+int seg_ypos = 0;
 
 GLFWwindow* createWindow() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_SAMPLES, 2);
 	
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	
@@ -63,6 +65,9 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		
     if (key == GLFW_KEY_Z && action == GLFW_REPEAT)
         z_pos -= 0.5f;
+		
+    if (key == GLFW_KEY_S && action == GLFW_PRESS)
+        seg_ypos++;
 }
 
 void errorContext() {
@@ -99,7 +104,7 @@ GLFWwindow* init () {
 	return window;
 }
 
-void threadPrimary (GLFWwindow* window) {
+void threadPrimary (GLFWwindow* window, segment* segment01, segment* segment02, segment* segment03, segment* segment04) {
 	// Data
 	GLfloat vertices[] = {
 		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
@@ -175,7 +180,6 @@ void threadPrimary (GLFWwindow* window) {
 	
 	glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
 	
-	
 	// Camera - Perspective
 	glm::mat4 proj = glm::perspective(
 		45.0f,
@@ -190,11 +194,6 @@ void threadPrimary (GLFWwindow* window) {
 	chrono::milliseconds framerate( 1000 / 60 );
 	
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-	
-	segment segment01(0, 0, 0, cenAttrib);
-	segment segment02(0, -1, 0, cenAttrib);
-	segment segment03(0, 0, -1, cenAttrib);
-	segment segment04(0, -1, -1, cenAttrib);
 	
     while (!glfwWindowShouldClose(window))
     {
@@ -213,12 +212,16 @@ void threadPrimary (GLFWwindow* window) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        if (segment01->getflag() == 1) {
+        	segment01->updateBuffer();
+        }
 		
 		// Render
-		segment01.render();
-		segment02.render();
-		segment03.render();
-		segment04.render();
+		segment01->render();
+		segment02->render();
+		segment03->render();
+		segment04->render();
         
         // Swap Buffer
         glfwSwapBuffers(window);
@@ -235,7 +238,7 @@ void threadPrimary (GLFWwindow* window) {
     }
 }
 
-void threadSecond (GLFWwindow* window) {
+void threadSecond (GLFWwindow* window, segment* segment01, segment* segment02, segment* segment03, segment* segment04) {
 	//Loop Setup Code
 	chrono::milliseconds framerate( 1000 / 30 );
 	
@@ -243,7 +246,9 @@ void threadSecond (GLFWwindow* window) {
     {
     	auto start_time = chrono::high_resolution_clock::now();
 		
-		x_pos += 0.1f;
+		if (segment01->getypos() != seg_ypos) {
+			segment01->update(0, seg_ypos, 0);
+		}
 		
 		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
 		if (looptime < framerate)
@@ -262,13 +267,23 @@ int main(void)
 {
 	GLFWwindow* window = init();
 	
-	thread threadLogic(threadSecond, window);
+	segment *segment01 = new segment(0, 0, 0, 0);
+	segment *segment02 = new segment(0, -1, 0, 0);
+	segment *segment03 = new segment(0, 0, -1, 0);
+	segment *segment04 = new segment(0, -1, -1, 0);
+	
+	thread threadLogic(threadSecond, window, segment01, segment02, segment03, segment04);
 	thread threadData(threadThird, window);
 	
-	threadPrimary(window);
+	threadPrimary(window, segment01, segment02, segment03, segment04);
 	
 	threadLogic.join();
 	threadData.join();
+    
+    delete segment01;
+    delete segment02;
+    delete segment03;
+    delete segment04;
 	
     glfwDestroyWindow(window);
 

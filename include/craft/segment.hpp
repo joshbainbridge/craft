@@ -18,6 +18,10 @@
 			segment ();
 			segment (int, int, int, GLuint);
 			void render ();
+			void update (int, int, int);
+			void updateBuffer ();
+			int getypos ();
+			char getflag ();
 	};
 	
 	#define SEGMENT
