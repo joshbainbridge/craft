@@ -1,10 +1,9 @@
 #ifndef SEGMENT
 	#include <craft/platformSpecification.hpp>
-	#include <craft/shaderProgram.hpp>
 
 	class segment {
 		float data[16][16][16];
-		GLfloat buffer[4096];
+		GLfloat buffer[12288];
 	
 		int xpos, ypos, zpos;
 		char flag;
@@ -17,10 +16,13 @@
 		public:
 			segment ();
 			segment (int, int, int, GLuint);
+			void init (int, int, int, GLuint);
 			void render ();
-			void update (int, int, int);
+			void updateData (int, int, int);
 			void updateBuffer ();
+			int getxpos ();
 			int getypos ();
+			int getzpos ();
 			char getflag ();
 	};
 	

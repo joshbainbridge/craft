@@ -2,7 +2,8 @@
 
 #include <craft/shaderProgram.hpp>
 #include <craft/settings.hpp>
-#include <craft/simplex.hpp>
+#include <craft/chunkController.hpp>
+#include <craft/chunk.hpp>
 #include <craft/segment.hpp>
 
 #define GLM_FORCE_RADIANS
@@ -16,10 +17,9 @@
 using namespace std;
 
 settings engine_settings;
-float x_pos = 7.5;
-float y_pos = 7.5;
-float z_pos = 7.5;
-int seg_ypos = 0;
+float x_pos = 10.0f;
+float y_pos = 10.0f;
+float z_pos = 74.0f;
 
 GLFWwindow* createWindow() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -49,25 +49,22 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         glfwSetWindowShouldClose(window, GL_TRUE);
 		
     if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT)
-        x_pos += 0.5f;
+        x_pos += 1.5f;
 		
     if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT)
-        x_pos -= 0.5f;
+        x_pos -= 1.5f;
 		
     if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT)
-        y_pos += 0.5f;
+        y_pos += 1.5f;
 		
     if (key == GLFW_KEY_UP && action == GLFW_REPEAT)
-        y_pos -= 0.5f;
+        y_pos -= 1.5f;
 		
     if (key == GLFW_KEY_A && action == GLFW_REPEAT)
-        z_pos += 0.5f;
+        z_pos += 1.5f;
 		
     if (key == GLFW_KEY_Z && action == GLFW_REPEAT)
-        z_pos -= 0.5f;
-		
-    if (key == GLFW_KEY_S && action == GLFW_PRESS)
-        seg_ypos++;
+        z_pos -= 1.5f;
 }
 
 void errorContext() {
@@ -104,7 +101,7 @@ GLFWwindow* init () {
 	return window;
 }
 
-void threadPrimary (GLFWwindow* window, segment* segment01, segment* segment02, segment* segment03, segment* segment04) {
+void threadPrimary (GLFWwindow* window, chunkController* chunkController01) {
 	// Data
 	GLfloat vertices[] = {
 		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
@@ -174,7 +171,7 @@ void threadPrimary (GLFWwindow* window, segment* segment01, segment* segment02, 
 	// Camera - Look At
 	glm::mat4 view = glm::lookAt(
 		glm::vec3(x_pos, y_pos, z_pos),
-		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 64.0f),
 		glm::vec3(0.0f, 0.0f, 1.0f)
 	);
 	
@@ -184,8 +181,8 @@ void threadPrimary (GLFWwindow* window, segment* segment01, segment* segment02, 
 	glm::mat4 proj = glm::perspective(
 		45.0f,
 		engine_settings.getRatio(),
-		1.0f,
-		50.0f
+		10.0f,
+		128.0f
 	);
 	
 	glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
@@ -202,7 +199,7 @@ void threadPrimary (GLFWwindow* window, segment* segment01, segment* segment02, 
 		// Camera - Look At
 		view = glm::lookAt(
 			glm::vec3(x_pos, y_pos, z_pos),
-			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 0.0f, 64.0f),
 			glm::vec3(0.0f, 0.0f, 1.0f)
 		);
 		
@@ -213,15 +210,8 @@ void threadPrimary (GLFWwindow* window, segment* segment01, segment* segment02, 
 		glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        if (segment01->getflag() == 1) {
-        	segment01->updateBuffer();
-        }
-		
-		// Render
-		segment01->render();
-		segment02->render();
-		segment03->render();
-		segment04->render();
+        //Render
+        chunkController01->renderChunk();
         
         // Swap Buffer
         glfwSwapBuffers(window);
@@ -238,17 +228,13 @@ void threadPrimary (GLFWwindow* window, segment* segment01, segment* segment02, 
     }
 }
 
-void threadSecond (GLFWwindow* window, segment* segment01, segment* segment02, segment* segment03, segment* segment04) {
+void threadSecond (GLFWwindow* window) {
 	//Loop Setup Code
 	chrono::milliseconds framerate( 1000 / 30 );
 	
     while (!glfwWindowShouldClose(window))
     {
     	auto start_time = chrono::high_resolution_clock::now();
-		
-		if (segment01->getypos() != seg_ypos) {
-			segment01->update(0, seg_ypos, 0);
-		}
 		
 		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
 		if (looptime < framerate)
@@ -267,23 +253,17 @@ int main(void)
 {
 	GLFWwindow* window = init();
 	
-	segment *segment01 = new segment(0, 0, 0, 0);
-	segment *segment02 = new segment(0, -1, 0, 0);
-	segment *segment03 = new segment(0, 0, -1, 0);
-	segment *segment04 = new segment(0, -1, -1, 0);
+	chunkController* chunkController01 = new chunkController(0);
 	
-	thread threadLogic(threadSecond, window, segment01, segment02, segment03, segment04);
+	thread threadLogic(threadSecond, window);
 	thread threadData(threadThird, window);
 	
-	threadPrimary(window, segment01, segment02, segment03, segment04);
+	threadPrimary(window, chunkController01);
 	
 	threadLogic.join();
 	threadData.join();
-    
-    delete segment01;
-    delete segment02;
-    delete segment03;
-    delete segment04;
+	
+	delete chunkController01;
 	
     glfwDestroyWindow(window);
 

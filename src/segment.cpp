@@ -1,5 +1,6 @@
 #include <craft/segment.hpp>
 #include <craft/simplex.hpp>
+#include <iostream>
 
 void dataConstructor ( float data[16][16][16], int xpos, int ypos, int zpos ) {
 
@@ -14,8 +15,9 @@ void dataConstructor ( float data[16][16][16], int xpos, int ypos, int zpos ) {
 					(float) k + (float) zpos * 16.0f,
 					100.0f,
 					0.85f
-				) + ( ( (float) k + (float) zpos * 16.0f ) - 8.0f ) / 16;
+				) + ( ( (float) k + (float) zpos * 16) - 64 ) / 32.0f  /* + ( ( (float) zpos * 16.0f + (float) k ) - 8.0f ) / 16*/ ;
 				
+				//std::cout << data[i][j][k] << std::endl;
 			}
 		}
 	}
@@ -251,6 +253,10 @@ segment::segment () {
 }
 
 segment::segment (int xinput, int yinput, int zinput, GLuint attrib_input) {
+	init(xinput, yinput, zinput, attrib_input);
+}
+
+void segment::init (int xinput, int yinput, int zinput, GLuint attrib_input) {
 	flag = 0;
 	
 	xpos = xinput;
@@ -275,7 +281,7 @@ void segment::render () {
 	glDrawElementsInstanced( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, counter / 3 );
 }
 
-void segment::update (int xinput, int yinput, int zinput) {
+void segment::updateData (int xinput, int yinput, int zinput) {
 	xpos = xinput;
 	ypos = yinput;
 	zpos = zinput;
@@ -293,8 +299,16 @@ void segment::updateBuffer () {
 	flag = 0;
 }
 
+int segment::getxpos () {
+	return xpos;
+}
+
 int segment::getypos () {
 	return ypos;
+}
+
+int segment::getzpos () {
+	return zpos;
 }
 
 char segment::getflag () {

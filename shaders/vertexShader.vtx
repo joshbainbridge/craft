@@ -11,6 +11,6 @@ uniform mat4 proj;
 
 void main()
 {
-	Color = vec3(0.5, 0.1, (centre[2] + 8) * 0.05);
+	Color = vec3((centre[0]) / 128, (centre[1]) / 128, (centre[2]) / 128);
     gl_Position = proj * view * vec4(position + centre, 1.0);
 }
