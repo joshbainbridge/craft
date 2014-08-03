@@ -1,4 +1,5 @@
-h1. README:
+README:
+=======
 
 This is an independent project which aims to find best practice within visual graphics technology and cross platform development. It currently supports Windows and OS X platforms.
 
