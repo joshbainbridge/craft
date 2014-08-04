@@ -6,14 +6,14 @@
 		int xpos, ypos;
 		char flag;
 		
-		GLuint attrib_loc;
+		GLuint* attrib_loc;
 		
 		segment segment_list[8];
 	
 		public:
 			chunk ();
-			chunk (int, int, GLuint);
-			void init (int, int, GLuint);
+			chunk (int, int, GLuint*);
+			void init (int, int, GLuint*);
 			void renderSeg ();
 			void updateSegData ();
 			void updateSegBuffer ();

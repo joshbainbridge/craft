@@ -3,11 +3,11 @@
 chunk::chunk () {
 }
 
-chunk::chunk (int xinput, int yinput, GLuint attrib_input) {
+chunk::chunk (int xinput, int yinput, GLuint* attrib_input) {
 	init (xinput, yinput, attrib_input);
 }
 
-void chunk::init (int xinput, int yinput, GLuint attrib_input) {
+void chunk::init (int xinput, int yinput, GLuint* attrib_input) {
 	flag = 0;
 	
 	xpos = xinput;

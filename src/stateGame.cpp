@@ -1,7 +1,5 @@
-#include <craft/platformSpecification.hpp>
-
+#include <craft/stateGame.hpp>
 #include <craft/shaderProgram.hpp>
-#include <craft/settings.hpp>
 #include <craft/character.hpp>
 #include <craft/chunkController.hpp>
 
@@ -15,90 +13,9 @@
 #include <iostream>
 using namespace std;
 
-settings engine_settings;
 float x_pos = 10.0f;
 float y_pos = 10.0f;
 float z_pos = 74.0f;
-
-GLFWwindow* createWindow(settings* engine_settings) {
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_SAMPLES, 2);
-	
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	
-    GLFWwindow* window = glfwCreateWindow(engine_settings->getResX(), engine_settings->getResY(), "Craft", NULL,NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
-    glfwMakeContextCurrent(window);
-    
-	glfwSwapInterval(0);
-	
-	return window;
-}
-
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-		
-    if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT)
-        x_pos += 1.5f;
-		
-    if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT)
-        x_pos -= 1.5f;
-		
-    if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT)
-        y_pos += 1.5f;
-		
-    if (key == GLFW_KEY_UP && action == GLFW_REPEAT)
-        y_pos -= 1.5f;
-		
-    if (key == GLFW_KEY_A && action == GLFW_REPEAT)
-        z_pos += 1.5f;
-		
-    if (key == GLFW_KEY_Z && action == GLFW_REPEAT)
-        z_pos -= 1.5f;
-}
-
-void errorContext() {
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		cout << "OpenGL error: " << error << endl;
-		exit(EXIT_FAILURE);
-	}
-	
-	#ifdef _WIN32
-	glewExperimental = GL_TRUE;
-	GLenum glewinit = glewInit();
-	if (glewinit != GLEW_OK) {
-		cout << "Glew not okay: " << glewinit << endl;
-		exit(EXIT_FAILURE);
-	}
-	#endif
-}
-
-GLFWwindow* init (settings* engine_settings) {
-	int err = glfwInit();
-    if (!err)
-	{
-        exit(EXIT_FAILURE);
-	}
-	
-	GLFWwindow* window = createWindow(engine_settings);
-	
-    glfwSetKeyCallback(window, keyCallback);
-	
-	errorContext();
-	
-	return window;
-}
 
 void threadPrimary (GLFWwindow* window, settings* engine_settings, chunkController* chunkController01) {
 	// Data
@@ -248,26 +165,25 @@ void threadSecond (GLFWwindow* window) {
 void threadThird (GLFWwindow* window) {
 }
 
-int main(void)
-{
-	settings engine_settings;
-	GLFWwindow* window = init(&engine_settings);
-	
+stateGame::stateGame () {
+}
+
+stateGame::stateGame (GLFWwindow* window_input, settings* settings_input) {
+	window = window_input;
+	engine_settings = settings_input;
+}
+
+void stateGame::run () {
 	GLuint loc = 0;
 	chunkController* chunkController01 = new chunkController(&loc);
 	
 	thread threadLogic(threadSecond, window);
 	thread threadData(threadThird, window);
 	
-	threadPrimary(window, &engine_settings, chunkController01);
+	threadPrimary(window, engine_settings, chunkController01);
 	
 	threadLogic.join();
 	threadData.join();
 	
 	delete chunkController01;
-	
-    glfwDestroyWindow(window);
-
-    glfwTerminate();
-    exit(EXIT_SUCCESS);
 }

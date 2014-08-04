@@ -1,6 +1,6 @@
 #include <craft/chunkController.hpp>
 
-chunkController::chunkController (GLuint attrib_input) {
+chunkController::chunkController (GLuint* attrib_input) {
 	attrib_loc = attrib_input;
 	
 	for (int i = 0; i < 9; i++) {

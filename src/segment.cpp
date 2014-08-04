@@ -13,9 +13,9 @@ void dataConstructor ( float data[16][16][16], int xpos, int ypos, int zpos ) {
 					(float) i + (float) xpos * 16.0f,
 					(float) j + (float) ypos * 16.0f,
 					(float) k + (float) zpos * 16.0f,
-					100.0f,
+					75.0f,
 					0.85f
-				) + ( ( (float) k + (float) zpos * 16) - 64 ) / 32.0f  /* + ( ( (float) zpos * 16.0f + (float) k ) - 8.0f ) / 16*/ ;
+				) + ( ( (float) k + (float) zpos * 16) - 64 ) / 24.0f;
 				
 				//std::cout << data[i][j][k] << std::endl;
 			}
@@ -51,26 +51,44 @@ int bufferConstructor ( GLfloat *position,  float data[16][16][16], int xpos, in
 									if ( bi < 0 ) {
 										// Check if West
 										w = 1;
+										if (xpos == -4) {
+											break;
+										}
 									}
 									if ( bi > 15 ) {
 										// Check if East
 										e = 1;
+										if (xpos == 4) {
+											break;
+										}
 									}
 									if ( bj < 0 ) {
 										// Check if South
 										s = 1;
+										if (ypos == -4) {
+											break;
+										}
 									}
 									if ( bj > 15 ) {
 										// Check if North
 										n = 1;
+										if (ypos == 4) {
+											break;
+										}
 									}
 									if ( bk < 0 ) {
 										// Check if Lower
 										l = 1;
+										if (zpos == 0) {
+											break;
+										}
 									} 
 									if ( bk > 15 ) {
 										// Check if Higher
 										h = 1;
+										if (zpos == 7) {
+											break;
+										}
 									}
 									
 									if ( w == 0 && e == 0 && s == 0 && n == 0 && l == 0 && h == 0 ) {
@@ -84,13 +102,12 @@ int bufferConstructor ( GLfloat *position,  float data[16][16][16], int xpos, in
 									} else {
 									
 										if ( w == 1 ) {
-									
 											if ( s == 0 && n == 0 && l == 0 && h == 0 ) {
 												// Check for West chunk
 											} else {
 										
 												if ( s == 1 ) {
-										
+													
 													if ( l == 1 ) {
 														// Check for South West chunk and Lower segment
 													} else if ( h == 1 ) {
@@ -252,11 +269,11 @@ int bufferConstructor ( GLfloat *position,  float data[16][16][16], int xpos, in
 segment::segment () {
 }
 
-segment::segment (int xinput, int yinput, int zinput, GLuint attrib_input) {
+segment::segment (int xinput, int yinput, int zinput, GLuint* attrib_input) {
 	init(xinput, yinput, zinput, attrib_input);
 }
 
-void segment::init (int xinput, int yinput, int zinput, GLuint attrib_input) {
+void segment::init (int xinput, int yinput, int zinput, GLuint* attrib_input) {
 	flag = 0;
 	
 	xpos = xinput;
@@ -276,7 +293,7 @@ void segment::init (int xinput, int yinput, int zinput, GLuint attrib_input) {
 
 void segment::render () {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(attrib_loc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3, 0);
+	glVertexAttribPointer(*attrib_loc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3, 0);
 	
 	glDrawElementsInstanced( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, counter / 3 );
 }

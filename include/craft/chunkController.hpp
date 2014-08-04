@@ -5,10 +5,10 @@
 	class chunkController {
 		chunk chunk_list[9][9];
 		
-		GLuint attrib_loc;
+		GLuint* attrib_loc;
 	
 		public:
-			chunkController (GLuint);
+			chunkController (GLuint*);
 			void renderChunk ();
 	};
 	

@@ -14,6 +14,9 @@ SET( PROJ_SOURCES
 	${SRC}/segment.cpp
 	${SRC}/chunk.cpp
 	${SRC}/chunkController.cpp
+	${SRC}/character.cpp
+	${SRC}/state.cpp
+	${SRC}/stateController.cpp
 	)
 SET( PROJ_HEADERS
 	${INC}/${CMAKE_PROJECT_NAME}/platformSpecification.hpp
@@ -23,6 +26,9 @@ SET( PROJ_HEADERS
 	${INC}/${CMAKE_PROJECT_NAME}/segment.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/chunk.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/chunkController.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/character.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/state.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/stateController.hpp
 	)
 
 ADD_EXECUTABLE( ${CMAKE_PROJECT_NAME} ${PROJ_SOURCES} ${PROJ_HEADERS} )

@@ -8,15 +8,15 @@
 		int xpos, ypos, zpos;
 		char flag;
 		
-		GLuint attrib_loc;
+		GLuint* attrib_loc;
 	
 		int counter;
 		GLuint vbo;
 	
 		public:
 			segment ();
-			segment (int, int, int, GLuint);
-			void init (int, int, int, GLuint);
+			segment (int, int, int, GLuint*);
+			void init (int, int, int, GLuint*);
 			void render ();
 			void updateData (int, int, int);
 			void updateBuffer ();
