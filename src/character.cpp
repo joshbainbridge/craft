@@ -15,8 +15,22 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	ypos = ypos_input;
 	zpos = zpos_input;
 	
+	xdown = 0;
+	ydown = 0;
+	zdown = 0;
+	
+	xvel = 0;
+	yvel = 0;
+	zvel = 0;
+	
 	zrot = 0.5;
 	xrot = 0.5;
+	
+	zrdown = 0;
+	xrdown = 0;
+	
+	zrvel = 0;
+	xrvel = 0;
 	
 	engine_settings = settings_input;
 	
@@ -24,14 +38,6 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
 	view = glm::rotate(view, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
 	view = glm::affineInverse(view);
-	
-	/*
-	view = glm::lookAt(
-		glm::vec3(xpos, ypos, zpos),
-		glm::vec3(0.0f, 0.0f, 64.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f)
-	);
-	*/
 	
 	proj = glm::perspective(
 		45.0f,
@@ -44,40 +50,87 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 }
 
 void character::update () {
-	if (flag == 1) {
-		view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(xpos, ypos, zpos));
-		view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
-		view = glm::rotate(view, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
-		view = glm::affineInverse(view);
-		
-		flag = 0;
+	if (xdown == 1) {
+		xvel += 0.5f;
+	} else if (xdown == -1) {
+		xvel -= 0.5f;
 	}
+	
+	if (ydown == 1) {
+		yvel += 0.5f;
+	} else if (ydown == -1) {
+		yvel -= 0.5f;
+	}
+	
+	if (zdown == 1) {
+		zvel += 0.5f;
+	} else if (zdown == -1) {
+		zvel -= 0.5f;
+	}
+	
+	if (zrdown == 1) {
+		zrvel += 0.01f;
+	} else if (zrdown == -1) {
+		zrvel -= 0.01f;
+	}
+	
+	if (xrdown == 1) {
+		xrvel += 0.01f;
+	} else if (xrdown == -1) {
+		xrvel -= 0.01f;
+	}
+	
+	view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
+	view = glm::rotate(view, glm::pi<float>() * xrot + xrvel, glm::vec3(0, 0, 1));
+	view = glm::rotate(view, glm::pi<float>() * zrot + zrvel, glm::vec3(1, 0, 0));
+	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, yvel, zvel));
+	
+	xpos = view[3][0];
+	ypos = view[3][1];
+	zpos = view[3][2];
+	
+	xrot = xrot + xrvel;
+	zrot = zrot + zrvel;
+	
+	view = glm::affineInverse(view);
+	
+	xvel *= 0.5;
+	yvel *= 0.5;
+	zvel *= 0.5;
+	
+	zrvel *= 0.5;
+	xrvel *= 0.5;
+	
+	flag = 2;
 }
 
-void character::setXpos (float input) {
-	xpos = input;
+void character::setXdown (int input) {
+	xdown = input;
 	flag = 1;
 }
 
-void character::setYpos (float input) {
-	ypos = input;
+void character::setYdown (int input) {
+	ydown = input;
 	flag = 1;
 }
 
-void character::setZpos (float input) {
-	zpos = input;
+void character::setZdown (int input) {
+	zdown = input;
 	flag = 1;
 }
 
-void character::setZrot (float input) {
-	zrot = input;
+void character::setZrdown (int input) {
+	zrdown = input;
 	flag = 1;
 }
 
-void character::setXrot (float input) {
-	xrot = input;
+void character::setXrdown (int input) {
+	xrdown = input;
 	flag = 1;
+}
+
+void character::setFlag (int input) {
+	flag = input;
 }
 
 glm::mat4 character::getView () {
@@ -100,10 +153,6 @@ float character::getZpos () {
 	return zpos;
 }
 
-float character::getZrot () {
-	return zrot;
-}
-
-float character::getXrot () {
-	return xrot;
+int character::getFlag () {
+	return flag;
 }

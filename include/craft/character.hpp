@@ -9,7 +9,12 @@
 		glm::mat4 proj;
 		
 		float xpos, ypos, zpos;
+		int xdown, ydown, zdown;
+		float xvel, yvel, zvel;
+		
 		float zrot, xrot;
+		int zrdown, xrdown;
+		float zrvel, xrvel;
 		
 		settings* engine_settings;
 		
@@ -19,18 +24,18 @@
 			character ();
 			character (float, float, float, settings*);
 			void update ();
-			void setXpos (float);
-			void setYpos (float);
-			void setZpos (float);
-			void setZrot (float);
-			void setXrot (float);
+			void setXdown (int);
+			void setYdown (int);
+			void setZdown (int);
+			void setZrdown (int);
+			void setXrdown (int);
+			void setFlag (int);
 			glm::mat4 getView ();
 			glm::mat4 getProj ();
 			float getXpos ();
 			float getYpos ();
 			float getZpos ();
-			float getZrot ();
-			float getXrot ();
+			int getFlag ();
 	};
 	
 	#define CHARACTER

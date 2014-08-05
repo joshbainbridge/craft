@@ -46,36 +46,46 @@ GLFWwindow* createWindow(settings* engine_settings) {
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
+	
+	
+    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+        player.setXdown( -1 );
 		
-    if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT)
-        player.setXpos( player.getXpos() - 1.5f );
+    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+        player.setXdown( 1 );
 		
-    if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT)
-        player.setXpos( player.getXpos() + 1.5f );
+    if ( (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) || (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) )
+        player.setXdown( 0 );
+    
 		
-    if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT)
-        player.setYpos( player.getYpos() - 1.5f );
+    if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+        player.setZdown( 1 );
 		
-    if (key == GLFW_KEY_UP && action == GLFW_REPEAT)
-        player.setYpos( player.getYpos() + 1.5f );
+    if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+        player.setZdown( -1 );
 		
-    if (key == GLFW_KEY_R && action == GLFW_REPEAT)
-        player.setZpos( player.getZpos() + 1.5f );
+    if ( (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) || (key == GLFW_KEY_UP && action == GLFW_RELEASE) )
+        player.setZdown( 0 );
+    
+	
+    if (key == GLFW_KEY_W && action == GLFW_PRESS)
+        player.setZrdown( 1 );
 		
-    if (key == GLFW_KEY_F && action == GLFW_REPEAT)
-        player.setZpos( player.getZpos() - 1.5f );
+    if (key == GLFW_KEY_S && action == GLFW_PRESS)
+        player.setZrdown( -1 );
 		
-    if (key == GLFW_KEY_W && action == GLFW_REPEAT)
-        player.setZrot( player.getZrot() + 0.05f );
+    if ( (key == GLFW_KEY_W && action == GLFW_RELEASE) || (key == GLFW_KEY_S && action == GLFW_RELEASE) )
+        player.setZrdown( 0 );
+    
+	
+    if (key == GLFW_KEY_A && action == GLFW_PRESS)
+        player.setXrdown( 1 );
 		
-    if (key == GLFW_KEY_S && action == GLFW_REPEAT)
-        player.setZrot( player.getZrot() - 0.05f );
+    if (key == GLFW_KEY_D && action == GLFW_PRESS)
+        player.setXrdown( -1 );
 		
-    if (key == GLFW_KEY_A && action == GLFW_REPEAT)
-        player.setXrot( player.getXrot() + 0.05f );
-		
-    if (key == GLFW_KEY_D && action == GLFW_REPEAT)
-        player.setXrot( player.getXrot() - 0.05f );
+    if ( (key == GLFW_KEY_A && action == GLFW_RELEASE) || (key == GLFW_KEY_D && action == GLFW_RELEASE) )
+        player.setXrdown( 0 );
 }
 
 void errorContext() {
@@ -128,12 +138,11 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, GLui
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        //Update
-        player.update();
 		
-		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr( player.getView() ));
-		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr( player.getProj() ));
+		if (player.getFlag() == 2) {
+			glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr( player.getView() ));
+			glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr( player.getProj() ));
+		}
         
         //Render
         chunkController01->renderChunk();
@@ -158,14 +167,15 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, GLui
 void threadSecond (GLFWwindow* window) {
 	
 	//Set Frame-rate
-	chrono::milliseconds framerate( 1000 / 30 );
+	chrono::milliseconds framerate( 1000 / 20 );
 	
     while (!glfwWindowShouldClose(window))
     {
     	//Start Timer
     	auto start_time = chrono::high_resolution_clock::now();
-		
-		//Do Something
+        
+        //Update
+        player.update();
 		
 		//Sleep
 		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
@@ -184,6 +194,7 @@ void threadThird (GLFWwindow* window) {
 int main(void)
 {
 	GLFWwindow* window = init(&engine_settings);
+	
 	
 	// Data
 	GLfloat vertices[] = {
@@ -273,7 +284,7 @@ int main(void)
 	delete chunkController01;
 	
     glfwDestroyWindow(window);
-
+	
     glfwTerminate();
     exit(EXIT_SUCCESS);
 }
