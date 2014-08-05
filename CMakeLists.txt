@@ -16,6 +16,7 @@ SET( PROJ_SOURCES
 	${SRC}/chunkController.cpp
 	${SRC}/character.cpp
 	${SRC}/state.cpp
+	${SRC}/stateGame.cpp
 	${SRC}/stateController.cpp
 	)
 SET( PROJ_HEADERS
@@ -28,6 +29,7 @@ SET( PROJ_HEADERS
 	${INC}/${CMAKE_PROJECT_NAME}/chunkController.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/character.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/state.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/stateGame.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/stateController.hpp
 	)
 

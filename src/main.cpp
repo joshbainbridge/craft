@@ -15,10 +15,10 @@
 #include <iostream>
 using namespace std;
 
-settings engine_settings;
-float x_pos = 10.0f;
-float y_pos = 10.0f;
-float z_pos = 74.0f;
+
+static settings engine_settings;
+static character player(10.0f, 10.0f, 74.0f, &engine_settings);
+
 
 GLFWwindow* createWindow(settings* engine_settings) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -48,22 +48,34 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         glfwSetWindowShouldClose(window, GL_TRUE);
 		
     if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT)
-        x_pos += 1.5f;
+        player.setXpos( player.getXpos() - 1.5f );
 		
     if (key == GLFW_KEY_RIGHT && action == GLFW_REPEAT)
-        x_pos -= 1.5f;
+        player.setXpos( player.getXpos() + 1.5f );
 		
     if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT)
-        y_pos += 1.5f;
+        player.setYpos( player.getYpos() - 1.5f );
 		
     if (key == GLFW_KEY_UP && action == GLFW_REPEAT)
-        y_pos -= 1.5f;
+        player.setYpos( player.getYpos() + 1.5f );
+		
+    if (key == GLFW_KEY_R && action == GLFW_REPEAT)
+        player.setZpos( player.getZpos() + 1.5f );
+		
+    if (key == GLFW_KEY_F && action == GLFW_REPEAT)
+        player.setZpos( player.getZpos() - 1.5f );
+		
+    if (key == GLFW_KEY_W && action == GLFW_REPEAT)
+        player.setZrot( player.getZrot() + 0.05f );
+		
+    if (key == GLFW_KEY_S && action == GLFW_REPEAT)
+        player.setZrot( player.getZrot() - 0.05f );
 		
     if (key == GLFW_KEY_A && action == GLFW_REPEAT)
-        z_pos += 1.5f;
+        player.setXrot( player.getXrot() + 0.05f );
 		
-    if (key == GLFW_KEY_Z && action == GLFW_REPEAT)
-        z_pos -= 1.5f;
+    if (key == GLFW_KEY_D && action == GLFW_REPEAT)
+        player.setXrot( player.getXrot() - 0.05f );
 }
 
 void errorContext() {
@@ -100,7 +112,79 @@ GLFWwindow* init (settings* engine_settings) {
 	return window;
 }
 
-void threadPrimary (GLFWwindow* window, settings* engine_settings, chunkController* chunkController01) {
+void threadPrimary (GLFWwindow* window, chunkController* chunkController01, GLuint uni_view, GLuint uni_proj) {
+	
+	//Set Frame-rate
+	chrono::milliseconds framerate( 1000 / 60 );
+	
+	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	
+    while (!glfwWindowShouldClose(window))
+    {
+    	//Start Timer
+    	auto start_time = chrono::high_resolution_clock::now();
+		
+		// Clearing Buffer
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glEnable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        //Update
+        player.update();
+		
+		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr( player.getView() ));
+		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr( player.getProj() ));
+        
+        //Render
+        chunkController01->renderChunk();
+        
+        // Swap Buffer
+        glfwSwapBuffers(window);
+		
+		//Check Events
+		glfwPollEvents();
+        
+        //Sleep
+		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
+		if (looptime < framerate)
+		{
+			this_thread::sleep_for( framerate - looptime );
+		}
+		
+		//cout << "Primary thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+    }
+}
+
+void threadSecond (GLFWwindow* window) {
+	
+	//Set Frame-rate
+	chrono::milliseconds framerate( 1000 / 30 );
+	
+    while (!glfwWindowShouldClose(window))
+    {
+    	//Start Timer
+    	auto start_time = chrono::high_resolution_clock::now();
+		
+		//Do Something
+		
+		//Sleep
+		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
+		if (looptime < framerate)
+		{
+			this_thread::sleep_for( framerate - looptime );
+		}
+		
+		//cout << "Logic thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+    }
+}
+
+void threadThird (GLFWwindow* window) {
+}
+
+int main(void)
+{
+	GLFWwindow* window = init(&engine_settings);
+	
 	// Data
 	GLfloat vertices[] = {
 		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
@@ -167,99 +251,21 @@ void threadPrimary (GLFWwindow* window, settings* engine_settings, chunkControll
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 	
-	// Camera - Look At
-	glm::mat4 view = glm::lookAt(
-		glm::vec3(x_pos, y_pos, z_pos),
-		glm::vec3(0.0f, 0.0f, 64.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f)
-	);
-	
-	glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
+	// Camera - Transform
+	glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr( player.getView() ));
 	
 	// Camera - Perspective
-	glm::mat4 proj = glm::perspective(
-		45.0f,
-		engine_settings->getRatio(),
-		10.0f,
-		80.0f
-	);
+	glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr( player.getProj() ));
 	
-	glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
 	
-	//Loop Setup Code
-	chrono::milliseconds framerate( 1000 / 60 );
 	
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	
-    while (!glfwWindowShouldClose(window))
-    {
-    	auto start_time = chrono::high_resolution_clock::now();
-		
-		// Camera - Look At
-		view = glm::lookAt(
-			glm::vec3(x_pos, y_pos, z_pos),
-			glm::vec3(0.0f, 0.0f, 64.0f),
-			glm::vec3(0.0f, 0.0f, 1.0f)
-		);
-		
-		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
-		
-		// Clearing Buffer
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glEnable(GL_DEPTH_TEST);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        //Render
-        chunkController01->renderChunk();
-        
-        // Swap Buffer
-        glfwSwapBuffers(window);
-		
-		glfwPollEvents();
-        
-		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
-		if (looptime < framerate)
-		{
-			this_thread::sleep_for( framerate - looptime );
-		}
-		
-		//cout << "Primary thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
-    }
-}
-
-void threadSecond (GLFWwindow* window) {
-	//Loop Setup Code
-	chrono::milliseconds framerate( 1000 / 30 );
-	
-    while (!glfwWindowShouldClose(window))
-    {
-    	auto start_time = chrono::high_resolution_clock::now();
-		
-		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
-		if (looptime < framerate)
-		{
-			this_thread::sleep_for( framerate - looptime );
-		}
-		
-		//cout << "Logic thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
-    }
-}
-
-void threadThird (GLFWwindow* window) {
-}
-
-int main(void)
-{
-	settings engine_settings;
-	GLFWwindow* window = init(&engine_settings);
-	
-	GLuint loc = 0;
-	chunkController* chunkController01 = new chunkController(&loc);
+	chunkController* chunkController01 = new chunkController(&cenAttrib);
 	
 	thread threadLogic(threadSecond, window);
 	thread threadData(threadThird, window);
 	
-	threadPrimary(window, &engine_settings, chunkController01);
+	threadPrimary(window, chunkController01, uni_view, uni_proj);
 	
 	threadLogic.join();
 	threadData.join();

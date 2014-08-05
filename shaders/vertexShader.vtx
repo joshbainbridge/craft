@@ -11,6 +11,9 @@ uniform mat4 proj;
 
 void main()
 {
-	Color = vec3((centre[0]) / 128, (centre[1]) / 128, (centre[2]) / 128);
+	vec3 cameraPosition = view[3].xyz * -mat3(view);
+	float fog = ( distance(centre, cameraPosition) / 128 ) * -1 + 1;
+	
+	Color = vec3((centre[0]) / 128, (centre[1]) / 128, (centre[2]) / 128) * fog;
     gl_Position = proj * view * vec4(position + centre, 1.0);
 }
