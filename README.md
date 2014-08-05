@@ -6,7 +6,7 @@ This is an independent project which aims to find best practice within visual gr
 Required dependencies are:
 
 * CMake 2.8
-* OpenGL 3.3
+* OpenGL 3.3 (Mavericks required on OS X)
 * GLFW 3.0
 * GLM
 * GLEW (Windows only)
