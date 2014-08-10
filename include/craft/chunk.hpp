@@ -3,24 +3,15 @@
 	#include <craft/segment.hpp>
 
 	class chunk {
-		int xpos, ypos;
+		segment segment_list[8];
 		char flag;
 		
-		GLuint* attrib_loc;
-		
-		segment segment_list[8];
-	
 		public:
 			chunk ();
-			chunk (int, int, GLuint*);
-			void init (int, int, GLuint*);
-			void renderSeg ();
-			void updateSegData ();
-			void updateSegBuffer ();
-			int getxpos ();
-			int getypos ();
-			char getflag ();
-			segment getSeg (int);
+			void init ();
+			char getFlag ();
+			segment* getSeg (int);
+			void setFlag (char);
 	};
 	
 	#define CHUNK

@@ -4,26 +4,22 @@
 	class segment {
 		float data[16][16][16];
 		GLfloat buffer[12288];
-	
-		int xpos, ypos, zpos;
-		char flag;
+		int flag;
 		
-		GLuint* attrib_loc;
-	
 		int counter;
 		GLuint vbo;
-	
+		
 		public:
 			segment ();
-			segment (int, int, int, GLuint*);
-			void init (int, int, int, GLuint*);
-			void render ();
-			void updateData (int, int, int);
-			void updateBuffer ();
-			int getxpos ();
-			int getypos ();
-			int getzpos ();
-			char getflag ();
+			void init ();
+			void updateGLBuffer ();
+			void render (GLuint*);
+			void setFlag (char);
+			void setCounter (int);
+			float (*getData())[16][16];
+			GLfloat* getBuffer ();
+			int getFlag ();
+			int getCounter ();
 	};
 	
 	#define SEGMENT

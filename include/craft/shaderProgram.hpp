@@ -8,6 +8,7 @@
 		public:
 			shaderProgram ();
 			shaderProgram (const char* vert_source_dir, const char* frag_source_dir);
+			void init (const char* vert_source_dir, const char* frag_source_dir);
 			void createVert (const char* vert_source_dir);
 			void createFrag (const char* frag_source_dir);
 			void createProg ();

@@ -1,8 +1,8 @@
 #version 150
 
-in vec3 position;
-in vec3 color;
-in vec3 centre;
+in vec3 vertex;
+in vec3 uv;
+in vec3 coordinate;
 
 out vec3 Color;
 
@@ -11,9 +11,6 @@ uniform mat4 proj;
 
 void main()
 {
-	vec3 cameraPosition = view[3].xyz * -mat3(view);
-	float fog = ( distance(centre, cameraPosition) / 84 ) * -1 + 1;
-	
-	Color = vec3((centre[0]) / 128, (centre[1]) / 128, (centre[2]) / 128) * fog;
-    gl_Position = proj * view * vec4(position + centre, 1.0);
+	Color = vec3(coordinate[0] / 128, coordinate[1] / 128, coordinate[2] / 128);
+    gl_Position = proj * view * vec4(vertex + coordinate, 1.0);
 }

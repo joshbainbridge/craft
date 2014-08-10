@@ -59,6 +59,10 @@ shaderProgram::shaderProgram () {
 }
 
 shaderProgram::shaderProgram (const char* vert_source_dir, const char* frag_source_dir) {
+	init (vert_source_dir, frag_source_dir);
+}
+
+void shaderProgram::init (const char* vert_source_dir, const char* frag_source_dir) {
 	vertex_shader = createShader(vert_source_dir, GL_VERTEX_SHADER);
 	fragment_shader = createShader(frag_source_dir, GL_FRAGMENT_SHADER);
 	
