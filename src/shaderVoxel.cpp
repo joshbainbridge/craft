@@ -40,11 +40,13 @@ void shaderVoxel::init (character* player_input) {
 	
 	glVertexAttribPointer(vertAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float)*5, 0);
 	glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(float)*5, (const void*) (sizeof(float)*3));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	// Element Buffer
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	// Camera - Transform
 	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr( player->getView() ));
