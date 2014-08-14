@@ -40,11 +40,21 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	view = glm::affineInverse(view);
 	
 	proj = glm::perspective(
-		45.0f,
+		engine_settings->getFov(),
 		engine_settings->getRatio(),
 		2.0f,
 		80.0f
 	);
+	/*
+	proj = glm::ortho(
+		-10.0f,
+		10.0f,
+		-10.0f,
+		10.0f,
+		2.0f,
+		80.0f
+	);
+	*/
 	
 	flag = 0;
 }

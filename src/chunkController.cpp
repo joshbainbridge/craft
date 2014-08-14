@@ -2,16 +2,16 @@
 #include <craft/simplex.hpp>
 #include <iostream>
 
-void dataConstructor ( character* player, chunk chunk_list[9][9] ) {
-	
-	int playerxpos = int( player->getXpos() / 16 );
-	int playerypos = int( player->getYpos() / 16 );
+void dataConstructor ( int playerxpos, int playerypos, chunk chunk_list[9][9] ) {
 	
 	segment* segment;
 	
 	int xpos;
 	int ypos;
 	int zpos;
+	
+	float terrain;
+	float tunnel;
 	
 	//Loop through each segment establishing xseg, yseg and zseg
 	for (int xseg = 0; xseg < 9; xseg++) {
@@ -32,14 +32,36 @@ void dataConstructor ( character* player, chunk chunk_list[9][9] ) {
 						for (int zvox = 0; zvox < 16; zvox++) {
 							
 							//Using simplex noise, generate data for segment 
-							segment->getData()[xvox][yvox][zvox] = simplex_noise(
+							terrain = simplex_noise(
 								3,
-								(float) xvox + (float) xpos * 16.0f,
-								(float) yvox + (float) ypos * 16.0f,
-								(float) zvox + (float) zpos * 16.0f,
+								(double) xpos * 16.0l + (double) xvox,
+								(double) ypos * 16.0l + (double) yvox,
+								(double) zpos * 16.0l + (double) zvox,
 								75.0f,
 								0.85f
-							) + ( ( (float) zvox + (float) zpos * 16) - 64 ) / 24.0f;
+							);
+							
+							terrain += ( ( (float) zvox + (float) zpos * 16) - 64 ) / 24.0f;
+							
+							tunnel = simplex_noise(
+								3,
+								(double) xpos * 16.0l + (double) xvox,
+								(double) ypos * 16.0l + (double) yvox,
+								(double) zpos * 16.0l + (double) zvox,
+								100.0f,
+								0.85f
+							);
+							
+							if (tunnel < 0)
+								tunnel *= -1;
+							
+							if (tunnel > 0.3) {
+								tunnel = 3.0f;
+							} else {
+								tunnel = 0.0f;
+							}
+							
+							segment->getData()[xvox][yvox][zvox] = terrain + tunnel;
 							
 						}
 					}
@@ -51,10 +73,7 @@ void dataConstructor ( character* player, chunk chunk_list[9][9] ) {
 	
 }
 
-void bufferConstructor ( character* player, chunk chunk_list[9][9] ) {
-	
-	int playerxpos = int( player->getXpos() / 16 );
-	int playerypos = int( player->getYpos() / 16 );
+void bufferConstructor ( int playerxpos, int playerypos, chunk chunk_list[9][9] ) {
 	
 	segment* segment;
 	
@@ -189,14 +208,20 @@ chunkController::chunkController (character* player_input, shaderVoxel* shader_i
 		}
 	}
 	
-	dataConstructor(player, chunk_list);
-	bufferConstructor(player, chunk_list);
+	int playerxpos = int( player->getXpos() / 16 );
+	int playerypos = int( player->getYpos() / 16 );
+	
+	dataConstructor(playerxpos, playerypos, chunk_list);
+	bufferConstructor(playerxpos, playerypos, chunk_list);
 	updateBuffer();
 }
 
 void chunkController::updateData () {
-	dataConstructor(player, chunk_list);
-	bufferConstructor(player, chunk_list);
+	int playerxpos = int( player->getXpos() / 16 );
+	int playerypos = int( player->getYpos() / 16 );
+	
+	dataConstructor(playerxpos, playerypos, chunk_list);
+	bufferConstructor(playerxpos, playerypos, chunk_list);
 }
 
 void chunkController::updateBuffer () {

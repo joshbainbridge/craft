@@ -3,10 +3,25 @@
 	#include <craft/settings.hpp>
 	
 	#include <glm/glm.hpp>
+	
+	struct fustrum {
+		
+		float ftl;
+		float ftr;
+		float fbl;
+		float fbr;
+		float ntl;
+		float ntr;
+		float nbl;
+		float nbr;
+		
+	};
 
 	class character {
 		glm::mat4 view;
 		glm::mat4 proj;
+		
+		fustrum view_frustrum;
 		
 		float xpos, ypos, zpos;
 		int xdown, ydown, zdown;
