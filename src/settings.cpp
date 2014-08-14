@@ -3,7 +3,6 @@
 settings::settings () {
 	resx = 940;
 	resy = 480;
-	fov = 2.0f;
 	cuda = 0;
 }
 
@@ -21,20 +20,12 @@ void settings::setResY (int input) {
 	resy = input;
 }
 
-void settings::setFov (float input) {
-	fov = input;
-}
-
 int settings::getResX () {
 	return resx;
 }
 
 int settings::getResY () {
 	return resy;
-}
-
-float settings::getFov () {
-	return fov;
 }
 
 float settings::getRatio () {

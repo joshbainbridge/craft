@@ -15,6 +15,10 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	ypos = ypos_input;
 	zpos = zpos_input;
 	
+	fov = 2.0f;
+	nclip = 2.0f;
+	fclip = 80.0f;
+	
 	xdown = 0;
 	ydown = 0;
 	zdown = 0;
@@ -40,10 +44,10 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	view = glm::affineInverse(view);
 	
 	proj = glm::perspective(
-		engine_settings->getFov(),
+		fov,
 		engine_settings->getRatio(),
-		2.0f,
-		80.0f
+		nclip,
+		fclip
 	);
 	/*
 	proj = glm::ortho(
@@ -51,10 +55,50 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 		10.0f,
 		-10.0f,
 		10.0f,
-		2.0f,
-		80.0f
+		nclip,
+		fclip
 	);
 	*/
+	
+	
+	glm::vec3 p;
+	glm::vec3 d;
+	glm::vec3 right;
+	glm::vec3 up;
+	float nearDist;
+	float Hnear;
+	float Wnear;
+	float farDist;
+	float Hfar;
+	float Wfar;
+	
+	p = glm::vec3(xpos, ypos, zpos);
+	d = glm::vec3(0.0f, 1.0f, 0.0f);
+	//d = glm::rotate(d, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
+	//d = glm::rotate(d, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
+	right = glm::normalize( glm::cross(d, glm::vec3(1.0f,0.0f,0.0f)) );
+	up = glm::normalize(glm::cross(d, right));
+	
+	nearDist = nclip;
+	Hnear = glm::tan( fov/2.0f ) * nearDist;
+	Wnear = Hnear * engine_settings->getRatio();
+	
+	farDist = fclip;
+	Hfar = glm::tan( fov/2.0f ) * farDist;
+	Wfar = Hfar * engine_settings->getRatio();
+	
+	view_frustum.fc = p + d * farDist;
+	view_frustum.ftl = view_frustum.fc + (up * Hfar) - (right * Wfar);
+	view_frustum.ftr = view_frustum.fc + (up * Hfar) + (right * Wfar);
+	view_frustum.fbl = view_frustum.fc - (up * Hfar) - (right * Wfar);
+	view_frustum.fbr = view_frustum.fc - (up * Hfar) + (right * Wfar);
+	
+	view_frustum.nc = p + d * nearDist;
+	view_frustum.ntl = view_frustum.nc + (up * Hnear) - (right * Wnear);
+	view_frustum.ntr = view_frustum.nc + (up * Hnear) + (right * Wnear);
+	view_frustum.nbl = view_frustum.nc - (up * Hnear) - (right * Wnear);
+	view_frustum.nbr = view_frustum.nc - (up * Hnear) + (right * Wnear);
+	
 	
 	flag = 0;
 }
@@ -164,6 +208,18 @@ void character::setXrdown (int input) {
 	flag = 1;
 }
 
+void character::setFov (float input) {
+	fov = input;
+}
+
+void character::setNclip (float input) {
+	nclip = input;
+}
+
+void character::setFclip (float input) {
+	fclip = input;
+}
+
 void character::setFlag (int input) {
 	flag = input;
 }
@@ -186,6 +242,18 @@ float character::getYpos () {
 
 float character::getZpos () {
 	return zpos;
+}
+
+float character::getFov () {
+	return fov;
+}
+
+float character::getNclip () {
+	return nclip;
+}
+
+float character::getFclip () {
+	return fclip;
 }
 
 int character::getFlag () {

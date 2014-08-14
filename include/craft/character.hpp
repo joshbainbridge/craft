@@ -4,16 +4,18 @@
 	
 	#include <glm/glm.hpp>
 	
-	struct fustrum {
+	struct frustum {
 		
-		float ftl;
-		float ftr;
-		float fbl;
-		float fbr;
-		float ntl;
-		float ntr;
-		float nbl;
-		float nbr;
+		glm::vec3 fc;
+		glm::vec3 ftl;
+		glm::vec3 ftr;
+		glm::vec3 fbl;
+		glm::vec3 fbr;
+		glm::vec3 nc;
+		glm::vec3 ntl;
+		glm::vec3 ntr;
+		glm::vec3 nbl;
+		glm::vec3 nbr;
 		
 	};
 
@@ -21,7 +23,11 @@
 		glm::mat4 view;
 		glm::mat4 proj;
 		
-		fustrum view_frustrum;
+		frustum view_frustum;
+		
+		float fov;
+		float nclip;
+		float fclip;
 		
 		float xpos, ypos, zpos;
 		int xdown, ydown, zdown;
@@ -44,12 +50,18 @@
 			void setZdown (int);
 			void setZrdown (int);
 			void setXrdown (int);
+			void setFov (float input);
+			void setNclip (float input);
+			void setFclip (float input);
 			void setFlag (int);
 			glm::mat4 getView ();
 			glm::mat4 getProj ();
 			float getXpos ();
 			float getYpos ();
 			float getZpos ();
+			float getFov ();
+			float getNclip ();
+			float getFclip ();
 			int getFlag ();
 	};
 	
