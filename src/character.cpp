@@ -72,7 +72,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	float Hfar;
 	float Wfar;
 	
-	p = glm::vec3(xpos, ypos, zpos);
+	p = glm::vec3(0.0f, 0.0f, 0.0f);
 	d = glm::vec3(0.0f, 1.0f, 0.0f);
 	//d = glm::rotate(d, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
 	//d = glm::rotate(d, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
