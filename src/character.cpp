@@ -49,16 +49,6 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 		nclip,
 		fclip
 	);
-	/*
-	proj = glm::ortho(
-		-10.0f,
-		10.0f,
-		-10.0f,
-		10.0f,
-		nclip,
-		fclip
-	);
-	*/
 	
 	
 	glm::vec3 p;

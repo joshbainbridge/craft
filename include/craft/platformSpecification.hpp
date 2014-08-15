@@ -1,4 +1,6 @@
 #ifndef PLATFORM_SPECIFICATION
+	#define PLATFORM_SPECIFICATION
+	
 	#ifdef _WIN32
 		#define GLEW_STATIC
 		#include <GL/glew.h>
@@ -9,5 +11,4 @@
 	#elif __linux__
 	#endif
 	
-	#define PLATFORM_SPECIFICATION
 #endif

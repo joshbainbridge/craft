@@ -1,4 +1,6 @@
 #ifndef STATE
+	#define STATE
+	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/settings.hpp>
 
@@ -13,5 +15,4 @@
 			virtual void run () =0;
 	};
 	
-	#define STATE
 #endif

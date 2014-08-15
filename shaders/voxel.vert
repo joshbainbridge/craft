@@ -1,7 +1,7 @@
-#version 150
+#version 330
 
 in vec3 vertex;
-in vec3 uv;
+in vec2 uv;
 in vec3 coordinate;
 
 out vec3 Color;

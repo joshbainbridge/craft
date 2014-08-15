@@ -1,4 +1,6 @@
 #ifndef CHARACTER
+	#define CHARACTER
+	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/settings.hpp>
 	
@@ -65,5 +67,4 @@
 			int getFlag ();
 	};
 	
-	#define CHARACTER
 #endif

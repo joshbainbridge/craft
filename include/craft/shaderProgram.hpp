@@ -1,4 +1,6 @@
-#ifndef SHADER_PROGRAM
+#ifndef SHADERPROGRAM
+	#define SHADERPROGRAM
+	
 	#include <craft/platformSpecification.hpp>
 	
 	class shaderProgram {
@@ -20,5 +22,4 @@
 			GLuint getProg ();
 	};
 	
-	#define SHADER_PROGRAM
 #endif

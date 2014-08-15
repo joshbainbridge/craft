@@ -1,4 +1,6 @@
 #ifndef SHADERVOXEL
+	#define SHADERVOXEL
+	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/shaderProgram.hpp>
 	#include <craft/character.hpp>
@@ -63,5 +65,4 @@
 			GLuint* getCoordAttrib ();
 	};
 	
-	#define SHADERVOXEL
 #endif

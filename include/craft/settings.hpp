@@ -1,4 +1,6 @@
 #ifndef SETTINGS
+	#define SETTINGS
+	
 	#include <craft/platformSpecification.hpp>
 
 	class settings {
@@ -15,5 +17,4 @@
 			float getRatio ();
 	};
 	
-	#define SETTINGS
 #endif

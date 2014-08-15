@@ -1,4 +1,6 @@
 #ifndef STATECONTROLLER
+	#define STATECONTROLLER
+	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/state.hpp>
 	
@@ -16,5 +18,4 @@
 			void run ();
 	};
 	
-	#define STATECONTROLLER
 #endif

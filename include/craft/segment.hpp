@@ -1,4 +1,6 @@
 #ifndef SEGMENT
+	#define SEGMENT
+	
 	#include <craft/platformSpecification.hpp>
 
 	class segment {
@@ -22,5 +24,4 @@
 			int getCounter ();
 	};
 	
-	#define SEGMENT
 #endif

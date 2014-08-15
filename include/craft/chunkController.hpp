@@ -1,4 +1,6 @@
 #ifndef CHUNKCONTROLLER
+	#define CHUNKCONTROLLER
+	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/chunk.hpp>
 	#include <craft/segment.hpp>
@@ -19,5 +21,4 @@
 			void render();
 	};
 	
-	#define CHUNKCONTROLLER
 #endif

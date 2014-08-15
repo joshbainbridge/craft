@@ -1,4 +1,6 @@
 #ifndef STATEGAME
+	#define STATEGAME
+	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/settings.hpp>
 	#include <craft/state.hpp>
@@ -11,5 +13,4 @@
 			void run ();
 	};
 	
-	#define STATEGAME
 #endif

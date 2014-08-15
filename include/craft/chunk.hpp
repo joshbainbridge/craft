@@ -1,4 +1,6 @@
 #ifndef CHUNK
+	#define CHUNK
+	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/segment.hpp>
 
@@ -14,5 +16,4 @@
 			void setFlag (char);
 	};
 	
-	#define CHUNK
 #endif
