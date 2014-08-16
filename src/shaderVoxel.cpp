@@ -10,6 +10,40 @@ shaderVoxel::shaderVoxel (character* player_input) {
 void shaderVoxel::init (character* player_input) {
 	player = player_input;
 	
+	GLfloat vertices_input[40] = {
+		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f, 0.0f, 1.0f
+	};
+	
+	for (int i = 0; i < 40; i++) {
+		vertices[i] = vertices_input[i];
+	}
+	
+	GLuint elements_input[36] = {
+		0, 1, 2,
+		1, 2, 3,
+		4, 5, 6,
+		5, 6, 7,
+		0, 1, 5,
+		0, 5, 4,
+		1, 3, 7,
+		1, 7, 5,
+		2, 3, 6,
+		3, 6, 7,
+		0, 2, 4,
+		2, 4, 6
+	};
+	
+	for (int i = 0; i < 36; i++) {
+		elements[i] = elements_input[i];
+	}
+	
 	// Attribute Buffer
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
