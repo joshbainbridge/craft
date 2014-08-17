@@ -15,6 +15,9 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	ypos = ypos_input;
 	zpos = zpos_input;
 	
+	xseg = int( xpos / 16 );
+	yseg = int( ypos / 16 );
+	
 	fov = 2.0f;
 	nclip = 2.0f;
 	fclip = 80.0f;
@@ -142,19 +145,19 @@ void character::update () {
 			if ( (xvel < 0.01f && xvel > 0.0f) || (xvel > -0.01f && xvel < 0.0f) )
 				xvel = 0; 
 		}
-	
+		
 		if (yvel != 0) {
 			yvel *= 0.75;
 			if ( (yvel < 0.01f && yvel > 0.0f) || (yvel > -0.01f && yvel < 0.0f) )
 				yvel = 0; 
 		}
-	
+		
 		if (zvel != 0) {
 			zvel *= 0.75;
 			if ( (zvel < 0.01f && zvel > 0.0f) || (zvel > -0.01f && zvel < 0.0f) )
-				yvel = 0; 
+				zvel = 0; 
 		}
-	
+		
 		if (zrvel != 0) {
 			zrvel *= 0.5;
 			if ( (zrvel < 0.001f && zrvel > 0.0f) || (zrvel > -0.001f && zrvel < 0.0f) )
@@ -186,6 +189,14 @@ void character::setZdown (int input) {
 	flag = 1;
 }
 
+void character::setXseg (int input) {
+	xseg = input;
+}
+
+void character::setYseg (int input) {
+	yseg = input;
+}
+
 void character::setZrdown (int input) {
 	zrdown = input;
 	flag = 1;
@@ -212,6 +223,14 @@ void character::setFlag (int input) {
 	flag = input;
 }
 
+void character::setFlagAuto () {
+	if ( xvel == 0 && yvel == 0 && zvel == 0 && xrvel == 0 && zrvel == 0 ) {
+		flag = 0;
+	} else {
+		flag = 1;
+	}
+}
+
 glm::mat4 character::getView () {
 	return view;
 }
@@ -230,6 +249,22 @@ float character::getYpos () {
 
 float character::getZpos () {
 	return zpos;
+}
+
+int character::getXseg () {
+	return xseg;
+}
+
+int character::getYseg () {
+	return yseg;
+}
+
+int character::checkSeg () {
+	if (xseg != int( xpos / 16 ) || yseg != int( ypos / 16 )) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 float character::getFov () {

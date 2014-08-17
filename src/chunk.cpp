@@ -5,7 +5,7 @@ chunk::chunk () {
 }
 
 void chunk::init () {
-	flag = 0;
+	flag = 1;
 	
 	for (int i = 0; i < 8; i++) {
 		segment_list[i].init();

@@ -15,9 +15,11 @@
 #include <iostream>
 using namespace std;
 
-static int update = 0;
 settings* engine_settings = new settings();
 character* player = new character(10.0f, 10.0f, 74.0f, engine_settings->getRatio());
+
+static int update = 0;
+int playerxpos = int( player->getXpos() / 16 );
 
 GLFWwindow* createWindow(settings* engine_settings) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -146,7 +148,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 		if (player->getFlag() == 2) {
 			glUniformMatrix4fv(shader->getUniView(), 1, GL_FALSE, glm::value_ptr( player->getView() ));
 			glUniformMatrix4fv(shader->getUniProj(), 1, GL_FALSE, glm::value_ptr( player->getProj() ));
-			player->setFlag(1);
+			player->setFlagAuto();
 		}
 		
 		if (update == 2) {
@@ -208,8 +210,11 @@ void threadTertiary (GLFWwindow* window, chunkController* chunkController01, cha
     	//Start Timer
     	auto start_time = chrono::high_resolution_clock::now();
         
+        
         //Update
-		if (update == 1) {
+		
+		if ( player->checkSeg() == 1 ) {
+			chunkController01->updateSegFlag(player);
 			chunkController01->updateData(player);
 			update = 2;
 		}

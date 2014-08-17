@@ -29,6 +29,8 @@
 		float nclip;
 		float fclip;
 		
+		int xseg, yseg;
+		
 		float xpos, ypos, zpos;
 		int xdown, ydown, zdown;
 		float xvel, yvel, zvel;
@@ -46,17 +48,23 @@
 			void setXdown (int);
 			void setYdown (int);
 			void setZdown (int);
+			void setXseg (int);
+			void setYseg (int);
 			void setZrdown (int);
 			void setXrdown (int);
 			void setFov (float input);
 			void setNclip (float input);
 			void setFclip (float input);
 			void setFlag (int);
+			void setFlagAuto();
 			glm::mat4 getView ();
 			glm::mat4 getProj ();
 			float getXpos ();
 			float getYpos ();
 			float getZpos ();
+			int getXseg ();
+			int getYseg ();
+			int checkSeg ();
 			float getFov ();
 			float getNclip ();
 			float getFclip ();

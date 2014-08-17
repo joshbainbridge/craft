@@ -9,13 +9,13 @@
 	#include <vector>
 
 	class chunkController {
-		chunk chunk_list[9][9];
-		std::vector< std::vector<chunk*> > chunk_list_new;
+		std::vector< std::vector<chunk*> > chunk_list;
 		
 		public:
 			chunkController ();
 			chunkController (character*);
 			~chunkController ();
+			void updateSegFlag(character*);
 			void updateData(character*);
 			void updateBuffer();
 			void render(shaderVoxel*);
