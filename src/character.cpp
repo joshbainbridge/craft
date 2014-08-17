@@ -18,7 +18,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	xseg = int( xpos / 16 );
 	yseg = int( ypos / 16 );
 	
-	fov = 2.0f;
+	fov = 1.0f;
 	nclip = 2.0f;
 	fclip = 80.0f;
 	

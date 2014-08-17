@@ -47,10 +47,6 @@ GLFWwindow* createWindow(settings* engine_settings) {
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
-	
-	
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-        update = 1;
     
 		
     if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
@@ -151,7 +147,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 			player->setFlagAuto();
 		}
 		
-		if (update == 2) {
+		if (update == 1) {
 			chunkController01->updateBuffer();
 			update = 0;
 		}
@@ -213,10 +209,10 @@ void threadTertiary (GLFWwindow* window, chunkController* chunkController01, cha
         
         //Update
 		
-		if ( player->checkSeg() == 1 ) {
+		if ( player->checkSeg() == 1 && update == 0 ) {
 			chunkController01->updateSegFlag(player);
 			chunkController01->updateData(player);
-			update = 2;
+			update = 1;
 		}
 		
 		//Sleep
