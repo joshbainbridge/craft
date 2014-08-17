@@ -10,7 +10,7 @@
 character::character () {
 }
 
-character::character (float xpos_input, float ypos_input, float zpos_input, settings* settings_input) {
+character::character (float xpos_input, float ypos_input, float zpos_input, float ratio) {
 	xpos = xpos_input;
 	ypos = ypos_input;
 	zpos = zpos_input;
@@ -36,8 +36,6 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	zrvel = 0;
 	xrvel = 0;
 	
-	engine_settings = settings_input;
-	
 	view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
 	view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
 	view = glm::rotate(view, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
@@ -45,7 +43,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	
 	proj = glm::perspective(
 		fov,
-		engine_settings->getRatio(),
+		ratio,
 		nclip,
 		fclip
 	);
@@ -71,11 +69,11 @@ character::character (float xpos_input, float ypos_input, float zpos_input, sett
 	
 	nearDist = nclip;
 	Hnear = glm::tan( fov/2.0f ) * nearDist;
-	Wnear = Hnear * engine_settings->getRatio();
+	Wnear = Hnear * ratio;
 	
 	farDist = fclip;
 	Hfar = glm::tan( fov/2.0f ) * farDist;
-	Wfar = Hfar * engine_settings->getRatio();
+	Wfar = Hfar * ratio;
 	
 	view_frustum.fc = p + d * farDist;
 	view_frustum.ftl = view_frustum.fc + (up * Hfar) - (right * Wfar);

@@ -34,9 +34,9 @@ void segment::updateGLBuffer () {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void segment::render (GLuint* shader_input) {
+void segment::render (GLuint coordAttrib) {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(*shader_input, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3, 0);
+	glVertexAttribPointer(coordAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3, 0);
 	glDrawElementsInstanced( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, counter / 3 );
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

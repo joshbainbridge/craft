@@ -17,7 +17,7 @@ using namespace std;
 
 static int update = 0;
 settings* engine_settings = new settings();
-character* player = new character(10.0f, 10.0f, 74.0f, engine_settings);
+character* player = new character(10.0f, 10.0f, 74.0f, engine_settings->getRatio());
 
 GLFWwindow* createWindow(settings* engine_settings) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -144,8 +144,8 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 		
 		// Update
 		if (player->getFlag() == 2) {
-			glUniformMatrix4fv(*(shader->getUniView()), 1, GL_FALSE, glm::value_ptr( player->getView() ));
-			glUniformMatrix4fv(*(shader->getUniProj()), 1, GL_FALSE, glm::value_ptr( player->getProj() ));
+			glUniformMatrix4fv(shader->getUniView(), 1, GL_FALSE, glm::value_ptr( player->getView() ));
+			glUniformMatrix4fv(shader->getUniProj(), 1, GL_FALSE, glm::value_ptr( player->getProj() ));
 			player->setFlag(1);
 		}
 		
@@ -155,7 +155,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 		}
 		
         //Render
-        chunkController01->render();
+        chunkController01->render(shader);
         
         // Swap Buffer
         glfwSwapBuffers(window);
@@ -198,7 +198,7 @@ void threadSecondary (GLFWwindow* window, character* player) {
     }
 }
 
-void threadTertiary (GLFWwindow* window, chunkController* chunkController01) {
+void threadTertiary (GLFWwindow* window, chunkController* chunkController01, character* player) {
 	
 	//Set Frame-rate
 	chrono::milliseconds framerate( 1000 / 20 );
@@ -210,7 +210,7 @@ void threadTertiary (GLFWwindow* window, chunkController* chunkController01) {
         
         //Update
 		if (update == 1) {
-			chunkController01->updateData();
+			chunkController01->updateData(player);
 			update = 2;
 		}
 		
@@ -231,10 +231,10 @@ int main(void)
 	
 	shaderVoxel* shader = new shaderVoxel(player);
 	
-	chunkController* chunkController01 = new chunkController(player, shader);
+	chunkController* chunkController01 = new chunkController(player);
 	
 	thread threadLogic(threadSecondary, window, player);
-	thread threadData(threadTertiary, window, chunkController01);
+	thread threadData(threadTertiary, window, chunkController01, player);
 	
 	threadPrimary(window, chunkController01, player, shader);
 	

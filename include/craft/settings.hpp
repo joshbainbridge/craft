@@ -1,7 +1,5 @@
 #ifndef SETTINGS
 	#define SETTINGS
-	
-	#include <craft/platformSpecification.hpp>
 
 	class settings {
 		int resx;

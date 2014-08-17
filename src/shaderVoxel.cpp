@@ -3,12 +3,11 @@
 shaderVoxel::shaderVoxel () {
 }
 
-shaderVoxel::shaderVoxel (character* player_input) {
-	init (player_input);
+shaderVoxel::shaderVoxel (character* player) {
+	init (player);
 }
 
-void shaderVoxel::init (character* player_input) {
-	player = player_input;
+void shaderVoxel::init (character* player) {
 	
 	GLfloat vertices_input[40] = {
 		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
@@ -93,14 +92,14 @@ void shaderVoxel::useProgram () {
 	glUseProgram(shader.getProg());
 }
 
-GLuint* shaderVoxel::getUniView () {
-	return &uniView;
+GLuint shaderVoxel::getUniView () {
+	return uniView;
 }
 
-GLuint* shaderVoxel::getUniProj () {
-	return &uniProj;
+GLuint shaderVoxel::getUniProj () {
+	return uniProj;
 }
 
-GLuint* shaderVoxel::getCoordAttrib () {
-	return &coordAttrib;
+GLuint shaderVoxel::getCoordAttrib () {
+	return coordAttrib;
 }

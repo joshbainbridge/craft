@@ -12,7 +12,7 @@ void chunk::init () {
 	}
 }
 
-char chunk::getFlag () {
+int chunk::getFlag () {
 	return flag;
 }
 
@@ -20,6 +20,6 @@ segment* chunk::getSeg (int index) {
 	return &segment_list[index];
 }
 
-void chunk::setFlag (char input) {
+void chunk::setFlag (int input) {
 	flag = input;
 }

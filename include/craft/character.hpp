@@ -2,8 +2,6 @@
 	#define CHARACTER
 	
 	#include <craft/platformSpecification.hpp>
-	#include <craft/settings.hpp>
-	
 	#include <glm/glm.hpp>
 	
 	struct frustum {
@@ -39,13 +37,11 @@
 		int zrdown, xrdown;
 		float zrvel, xrvel;
 		
-		settings* engine_settings;
-		
 		int flag;
 		
 		public:
 			character ();
-			character (float, float, float, settings*);
+			character (float, float, float, float);
 			void update ();
 			void setXdown (int);
 			void setYdown (int);

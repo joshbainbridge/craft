@@ -6,14 +6,14 @@
 
 	class chunk {
 		segment segment_list[8];
-		char flag;
+		int flag;
 		
 		public:
 			chunk ();
 			void init ();
-			char getFlag ();
+			int getFlag ();
 			segment* getSeg (int);
-			void setFlag (char);
+			void setFlag (int);
 	};
 	
 #endif

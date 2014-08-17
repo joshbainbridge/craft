@@ -1,5 +1,8 @@
 #include <craft/chunkController.hpp>
+
+#include <craft/segment.hpp>
 #include <craft/simplex.hpp>
+
 #include <iostream>
 
 void dataConstructor ( int playerxpos, int playerypos, chunk chunk_list[9][9] ) {
@@ -197,10 +200,7 @@ void bufferConstructor ( int playerxpos, int playerypos, chunk chunk_list[9][9] 
 chunkController::chunkController () {
 }
 
-chunkController::chunkController (character* player_input, shaderVoxel* shader_input) {
-	
-	player = player_input;
-	shader = shader_input;
+chunkController::chunkController (character* player) {
 	
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
@@ -216,7 +216,7 @@ chunkController::chunkController (character* player_input, shaderVoxel* shader_i
 	updateBuffer();
 }
 
-void chunkController::updateData () {
+void chunkController::updateData (character* player) {
 	int playerxpos = int( player->getXpos() / 16 );
 	int playerypos = int( player->getYpos() / 16 );
 	
@@ -234,7 +234,7 @@ void chunkController::updateBuffer () {
 	}
 }
 
-void chunkController::render () {
+void chunkController::render (shaderVoxel* shader) {
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
 			for (int k = 0; k < 8; k++) {

@@ -12,18 +12,13 @@
 	
 	class shaderVoxel {
 		
-		character* player;
-		
 		GLfloat vertices[40];
-	
 		GLuint elements[36];
 		
 		shaderProgram shader;
 		
 		GLuint vao;
-		
 		GLuint vbo;
-		
 		GLuint ebo;
 		
 		GLuint coordAttrib;
@@ -38,9 +33,9 @@
 			shaderVoxel (character*);
 			void init (character*);
 			void useProgram ();
-			GLuint* getUniView ();
-			GLuint* getUniProj ();
-			GLuint* getCoordAttrib ();
+			GLuint getUniView ();
+			GLuint getUniProj ();
+			GLuint getCoordAttrib ();
 	};
 	
 #endif
