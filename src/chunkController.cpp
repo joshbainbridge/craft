@@ -202,9 +202,12 @@ chunkController::chunkController () {
 
 chunkController::chunkController (character* player) {
 	
+	chunk_list_new.resize(9);
 	for (int i = 0; i < 9; i++) {
+		chunk_list_new[i].resize(9);
 		for (int j = 0; j < 9; j++) {
-			chunk_list[i][j].init();
+			chunk* contructed = new chunk();
+			chunk_list_new[i][j] = contructed;
 		}
 	}
 	
@@ -214,6 +217,14 @@ chunkController::chunkController (character* player) {
 	dataConstructor(playerxpos, playerypos, chunk_list);
 	bufferConstructor(playerxpos, playerypos, chunk_list);
 	updateBuffer();
+}
+
+chunkController::~chunkController () {
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			delete chunk_list_new[i][j];
+		}
+	}
 }
 
 void chunkController::updateData (character* player) {
