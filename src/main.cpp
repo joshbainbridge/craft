@@ -16,7 +16,7 @@
 using namespace std;
 
 settings* engine_settings = new settings();
-character* player = new character(10.0f, 10.0f, 74.0f, engine_settings->getRatio());
+character* player = new character(0.0f, 0.0f, 74.0f, engine_settings->getRatio());
 
 static int update = 0;
 int playerxpos = int( player->getXpos() / 16 );
@@ -153,7 +153,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 		}
 		
         //Render
-        chunkController01->render(shader);
+        chunkController01->render(player, shader);
         
         // Swap Buffer
         glfwSwapBuffers(window);

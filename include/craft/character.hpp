@@ -2,6 +2,8 @@
 	#define CHARACTER
 	
 	#include <craft/platformSpecification.hpp>
+	#include <craft/plane.hpp>
+	
 	#include <glm/glm.hpp>
 	
 	struct frustum {
@@ -24,6 +26,7 @@
 		glm::mat4 proj;
 		
 		frustum view_frustum;
+		plane planes[7];
 		
 		float fov;
 		float nclip;
@@ -45,6 +48,7 @@
 			character ();
 			character (float, float, float, float);
 			void update ();
+			int frustumCheck(float, float, float, float);
 			void setXdown (int);
 			void setYdown (int);
 			void setZdown (int);

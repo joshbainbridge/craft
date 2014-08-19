@@ -19,6 +19,7 @@ SET( PROJ_SOURCES
 	${SRC}/stateGame.cpp
 	${SRC}/stateController.cpp
 	${SRC}/shaderVoxel.cpp
+	${SRC}/plane.cpp
 	)
 SET( PROJ_HEADERS
 	${INC}/${CMAKE_PROJECT_NAME}/platformSpecification.hpp
@@ -33,6 +34,7 @@ SET( PROJ_HEADERS
 	${INC}/${CMAKE_PROJECT_NAME}/stateGame.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/stateController.hpp
 	${INC}/${CMAKE_PROJECT_NAME}/shaderVoxel.hpp
+	${INC}/${CMAKE_PROJECT_NAME}/plane.hpp
 	)
 
 ADD_EXECUTABLE( ${CMAKE_PROJECT_NAME} ${PROJ_SOURCES} ${PROJ_HEADERS} )

@@ -63,7 +63,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	float Hfar;
 	float Wfar;
 	
-	p = glm::vec3(0.0f, 0.0f, 0.0f);
+	p = glm::vec3(xpos, ypos, zpos);
 	d = glm::vec3(0.0f, 1.0f, 0.0f);
 	//d = glm::rotate(d, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
 	//d = glm::rotate(d, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
@@ -90,6 +90,13 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	view_frustum.nbl = view_frustum.nc - (up * Hnear) - (right * Wnear);
 	view_frustum.nbr = view_frustum.nc - (up * Hnear) + (right * Wnear);
 	
+	planes[0].init(view_frustum.ftr, view_frustum.fbl, view_frustum.ftl);
+	planes[1].init(view_frustum.ntr, view_frustum.nbl, view_frustum.nbr);
+	planes[2].init(view_frustum.fbl, view_frustum.ntl, view_frustum.ftl);
+	planes[3].init(view_frustum.fbr, view_frustum.ntr, view_frustum.nbr);
+	planes[4].init(view_frustum.nbl, view_frustum.fbr, view_frustum.nbr);
+	planes[5].init(view_frustum.ntl, view_frustum.ftr, view_frustum.ftl);
+	planes[6].init(glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 10));
 	
 	flag = 0;
 }
@@ -172,6 +179,18 @@ void character::update () {
 	
 		flag = 2;
 	}
+}
+
+int character::frustumCheck (float x, float y, float z, float r) {
+	glm::vec3 p(x, y, z);
+	int inside = 1;
+	
+	for (int i = 0; i < 6; i++) {
+		if (planes[i].intersection(p, r) != 1)
+			inside = 0;
+	}
+	
+	return inside;
 }
 
 void character::setXdown (int input) {

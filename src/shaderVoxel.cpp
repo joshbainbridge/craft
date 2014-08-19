@@ -10,14 +10,14 @@ shaderVoxel::shaderVoxel (character* player) {
 void shaderVoxel::init (character* player) {
 	
 	GLfloat vertices_input[40] = {
-		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f, 0.0f, 1.0f
+		0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		1.0f, 0.0f, 0.0f, 0.0f, 1.0f
 	};
 	
 	for (int i = 0; i < 40; i++) {

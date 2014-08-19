@@ -325,12 +325,20 @@ void chunkController::updateBuffer () {
 	}
 }
 
-void chunkController::render (shaderVoxel* shader) {
+void chunkController::render (character* player, shaderVoxel* shader) {
+	int countin = 0;
+	int countout = 0;
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
 			for (int k = 0; k < 8; k++) {
-				chunk_list[i][j]->getSeg(k)->render( shader->getCoordAttrib() );
+				if (player->frustumCheck(float( (player->getXseg() - 4 + i) * 16 + 8), float( (player->getYseg() - 4 + j) * 16 + 8), float(k * 16 + 8), 20.0f) == 1) {
+					chunk_list[i][j]->getSeg(k)->render( shader->getCoordAttrib() );
+					countin++;
+				} else {
+					countout++;
+				}
 			}
 		}
 	}
+	std::cout << countin << ", " << countout << std::endl;
 }

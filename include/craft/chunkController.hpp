@@ -18,7 +18,7 @@
 			void updateSegFlag(character*);
 			void updateData(character*);
 			void updateBuffer();
-			void render(shaderVoxel*);
+			void render(character*, shaderVoxel*);
 	};
 	
 #endif
