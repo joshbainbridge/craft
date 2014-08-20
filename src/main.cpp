@@ -16,7 +16,7 @@
 using namespace std;
 
 settings* engine_settings = new settings();
-character* player = new character(0.0f, 0.0f, 74.0f, engine_settings->getRatio());
+character* player = new character(0.0f, 0.0f, 65.0f, engine_settings->getRatio());
 
 static int update = 0;
 int playerxpos = int( player->getXpos() / 16 );
@@ -60,33 +60,33 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     
 		
     if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
-        player->setZdown( 1 );
+        player->setYdown( -1 );
 		
     if (key == GLFW_KEY_UP && action == GLFW_PRESS)
-        player->setZdown( -1 );
+        player->setYdown( 1 );
 		
     if ( (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) || (key == GLFW_KEY_UP && action == GLFW_RELEASE) )
-        player->setZdown( 0 );
+        player->setYdown( 0 );
     
 	
-    if (key == GLFW_KEY_W && action == GLFW_PRESS)
-        player->setZrdown( 1 );
-		
     if (key == GLFW_KEY_S && action == GLFW_PRESS)
-        player->setZrdown( -1 );
+        player->setXrdown( -1 );
 		
-    if ( (key == GLFW_KEY_W && action == GLFW_RELEASE) || (key == GLFW_KEY_S && action == GLFW_RELEASE) )
-        player->setZrdown( 0 );
+    if (key == GLFW_KEY_W && action == GLFW_PRESS)
+        player->setXrdown( 1 );
+		
+    if ( (key == GLFW_KEY_S && action == GLFW_RELEASE) || (key == GLFW_KEY_W && action == GLFW_RELEASE) )
+        player->setXrdown( 0 );
     
 	
     if (key == GLFW_KEY_A && action == GLFW_PRESS)
-        player->setXrdown( 1 );
+        player->setZrdown( -1 );
 		
     if (key == GLFW_KEY_D && action == GLFW_PRESS)
-        player->setXrdown( -1 );
+        player->setZrdown( 1 );
 		
     if ( (key == GLFW_KEY_A && action == GLFW_RELEASE) || (key == GLFW_KEY_D && action == GLFW_RELEASE) )
-        player->setXrdown( 0 );
+        player->setZrdown( 0 );
 }
 
 void errorContext() {

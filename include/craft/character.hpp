@@ -29,6 +29,7 @@
 		plane planes[7];
 		
 		float fov;
+		float ratio;
 		float nclip;
 		float fclip;
 		

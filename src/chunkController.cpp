@@ -331,7 +331,8 @@ void chunkController::render (character* player, shaderVoxel* shader) {
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
 			for (int k = 0; k < 8; k++) {
-				if (player->frustumCheck(float( (player->getXseg() - 4 + i) * 16 + 8), float( (player->getYseg() - 4 + j) * 16 + 8), float(k * 16 + 8), 20.0f) == 1) {
+				//Set back to 1
+				if (player->frustumCheck(float( (player->getXseg() - 4 + i) * 16 + 8), float( (player->getYseg() - 4 + j) * 16 + 8), float(k * 16 + 8), 11.32f) == 1) {
 					chunk_list[i][j]->getSeg(k)->render( shader->getCoordAttrib() );
 					countin++;
 				} else {

@@ -10,7 +10,7 @@
 character::character () {
 }
 
-character::character (float xpos_input, float ypos_input, float zpos_input, float ratio) {
+character::character (float xpos_input, float ypos_input, float zpos_input, float ratio_input) {
 	xpos = xpos_input;
 	ypos = ypos_input;
 	zpos = zpos_input;
@@ -19,6 +19,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	yseg = int( ypos / 16 );
 	
 	fov = 1.0f;
+	ratio = ratio_input;
 	nclip = 2.0f;
 	fclip = 80.0f;
 	
@@ -30,18 +31,16 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	yvel = 0;
 	zvel = 0;
 	
-	zrot = 0.5;
-	xrot = 0.5;
+	xrot = 0.0f;
+	zrot = 0.0f;
 	
-	zrdown = 0;
 	xrdown = 0;
+	zrdown = 0;
 	
-	zrvel = 0;
 	xrvel = 0;
+	zrvel = 0;
 	
 	view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
-	view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
-	view = glm::rotate(view, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
 	view = glm::affineInverse(view);
 	
 	proj = glm::perspective(
@@ -64,10 +63,9 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	float Wfar;
 	
 	p = glm::vec3(xpos, ypos, zpos);
-	d = glm::vec3(0.0f, 1.0f, 0.0f);
-	//d = glm::rotate(d, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
-	//d = glm::rotate(d, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
-	right = glm::normalize( glm::cross(d, glm::vec3(1.0f,0.0f,0.0f)) );
+	d = glm::vec3(0.0f, 0.0f, -1.0f);
+	
+	right = glm::normalize( glm::cross(d, glm::vec3(0.0f,1.0f,0.0f)) );
 	up = glm::normalize(glm::cross(d, right));
 	
 	nearDist = nclip;
@@ -97,6 +95,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	planes[4].init(view_frustum.nbl, view_frustum.fbr, view_frustum.nbr);
 	planes[5].init(view_frustum.ntl, view_frustum.ftr, view_frustum.ftl);
 	planes[6].init(glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 10));
+	
 	
 	flag = 0;
 }
@@ -137,16 +136,81 @@ void character::update () {
 		zrot = zrot + zrvel;
 		
 		view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
-		view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(0, 0, 1));
-		view = glm::rotate(view, glm::pi<float>() * zrot, glm::vec3(1, 0, 0));
-		view = view * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, yvel, zvel));
+		view = glm::rotate(view, glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
+		view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(1, 0, 0));
+		view = view * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, zvel, -yvel));
 	
 		xpos = view[3][0];
 		ypos = view[3][1];
 		zpos = view[3][2];
 	
 		view = glm::affineInverse(view);
+		
+		
+		glm::vec3 p;
+		glm::vec3 d;
+		glm::vec3 right;
+		glm::vec3 up;
+		float nearDist;
+		float Hnear;
+		float Wnear;
+		float farDist;
+		float Hfar;
+		float Wfar;
 	
+		p = glm::vec3(xpos, ypos, zpos);
+		d = glm::vec3(0.0f, 0.0f, -1.0f);
+	
+		float cs = cos(glm::pi<float>() * xrot);
+		float sn = sin(glm::pi<float>() * xrot);
+
+		float yn = d[1] * cs - d[2] * sn;
+		float zn = d[1] * sn + d[2] * cs;
+	
+		d[1] = yn;
+		d[2] = zn;
+	
+		cs = cos(glm::pi<float>() * -zrot);
+		sn = sin(glm::pi<float>() * -zrot);
+
+		float xn = d[0] * cs - d[1] * sn;
+		yn = d[0] * sn + d[1] * cs;
+	
+		d[0] = xn;
+		d[1] = yn;
+	
+		right = glm::normalize( glm::cross(d, glm::vec3(0.0f,0.0f,1.0f)) );
+		up = glm::normalize(glm::cross(d, right));
+	
+		nearDist = nclip;
+		Hnear = glm::tan( fov/2.0f ) * nearDist;
+		Wnear = Hnear * ratio;
+	
+		farDist = fclip;
+		Hfar = glm::tan( fov/2.0f ) * farDist;
+		Wfar = Hfar * ratio;
+	
+		view_frustum.fc = p + d * farDist;
+		view_frustum.ftl = view_frustum.fc + (up * Hfar) - (right * Wfar);
+		view_frustum.ftr = view_frustum.fc + (up * Hfar) + (right * Wfar);
+		view_frustum.fbl = view_frustum.fc - (up * Hfar) - (right * Wfar);
+		view_frustum.fbr = view_frustum.fc - (up * Hfar) + (right * Wfar);
+	
+		view_frustum.nc = p + d * nearDist;
+		view_frustum.ntl = view_frustum.nc + (up * Hnear) - (right * Wnear);
+		view_frustum.ntr = view_frustum.nc + (up * Hnear) + (right * Wnear);
+		view_frustum.nbl = view_frustum.nc - (up * Hnear) - (right * Wnear);
+		view_frustum.nbr = view_frustum.nc - (up * Hnear) + (right * Wnear);
+	
+		planes[0].init(view_frustum.ftr, view_frustum.fbl, view_frustum.ftl);
+		planes[1].init(view_frustum.ntr, view_frustum.nbl, view_frustum.nbr);
+		planes[2].init(view_frustum.fbl, view_frustum.ntl, view_frustum.ftl);
+		planes[3].init(view_frustum.fbr, view_frustum.ntr, view_frustum.nbr);
+		planes[4].init(view_frustum.nbl, view_frustum.fbr, view_frustum.nbr);
+		planes[5].init(view_frustum.ntl, view_frustum.ftr, view_frustum.ftl);
+		planes[6].init(glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 10));
+		
+		
 		if (xvel != 0) {
 			xvel *= 0.75;
 			if ( (xvel < 0.01f && xvel > 0.0f) || (xvel > -0.01f && xvel < 0.0f) )
