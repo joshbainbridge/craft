@@ -45,9 +45,27 @@
 		
 		int flag;
 		
+		// Frustum Calc Data
+		glm::vec3 p;
+		glm::vec3 d;
+		glm::vec3 right;
+		glm::vec3 up;
+		float nearDist;
+		float Hnear;
+		float Wnear;
+		float farDist;
+		float Hfar;
+		float Wfar;
+		float cs;
+		float sn;
+		float xn;
+		float yn;
+		float zn;
+		
 		public:
 			character ();
 			character (float, float, float, float);
+			void init ();
 			void update ();
 			int frustumCheck(float, float, float, float);
 			void setXdown (int);

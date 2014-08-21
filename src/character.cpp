@@ -31,7 +31,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	yvel = 0;
 	zvel = 0;
 	
-	xrot = 0.0f;
+	xrot = 0.5f;
 	zrot = 0.0f;
 	
 	xrdown = 0;
@@ -40,7 +40,16 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	xrvel = 0;
 	zrvel = 0;
 	
+	init();
+	
+	flag = 0;
+}
+
+void character::init () {
 	view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
+	view = glm::rotate(view, glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
+	view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(1, 0, 0));
+	
 	view = glm::affineInverse(view);
 	
 	proj = glm::perspective(
@@ -51,21 +60,28 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	);
 	
 	
-	glm::vec3 p;
-	glm::vec3 d;
-	glm::vec3 right;
-	glm::vec3 up;
-	float nearDist;
-	float Hnear;
-	float Wnear;
-	float farDist;
-	float Hfar;
-	float Wfar;
-	
 	p = glm::vec3(xpos, ypos, zpos);
 	d = glm::vec3(0.0f, 0.0f, -1.0f);
 	
-	right = glm::normalize( glm::cross(d, glm::vec3(0.0f,1.0f,0.0f)) );
+	cs = cos(glm::pi<float>() * xrot);
+	sn = sin(glm::pi<float>() * xrot);
+
+	yn = d[1] * cs - d[2] * sn;
+	zn = d[1] * sn + d[2] * cs;
+
+	d[1] = yn;
+	d[2] = zn;
+
+	cs = cos(glm::pi<float>() * -zrot);
+	sn = sin(glm::pi<float>() * -zrot);
+
+	xn = d[0] * cs - d[1] * sn;
+	yn = d[0] * sn + d[1] * cs;
+	
+	d[0] = xn;
+	d[1] = yn;
+	
+	right = glm::normalize( glm::cross(d, glm::vec3(0.0f,0.0f,1.0f)) );
 	up = glm::normalize(glm::cross(d, right));
 	
 	nearDist = nclip;
@@ -95,9 +111,6 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	planes[4].init(view_frustum.nbl, view_frustum.fbr, view_frustum.nbr);
 	planes[5].init(view_frustum.ntl, view_frustum.ftr, view_frustum.ftl);
 	planes[6].init(glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 10));
-	
-	
-	flag = 0;
 }
 
 void character::update () {
@@ -147,25 +160,14 @@ void character::update () {
 		view = glm::affineInverse(view);
 		
 		
-		glm::vec3 p;
-		glm::vec3 d;
-		glm::vec3 right;
-		glm::vec3 up;
-		float nearDist;
-		float Hnear;
-		float Wnear;
-		float farDist;
-		float Hfar;
-		float Wfar;
-	
 		p = glm::vec3(xpos, ypos, zpos);
 		d = glm::vec3(0.0f, 0.0f, -1.0f);
 	
-		float cs = cos(glm::pi<float>() * xrot);
-		float sn = sin(glm::pi<float>() * xrot);
+		cs = cos(glm::pi<float>() * xrot);
+		sn = sin(glm::pi<float>() * xrot);
 
-		float yn = d[1] * cs - d[2] * sn;
-		float zn = d[1] * sn + d[2] * cs;
+		yn = d[1] * cs - d[2] * sn;
+		zn = d[1] * sn + d[2] * cs;
 	
 		d[1] = yn;
 		d[2] = zn;
@@ -173,23 +175,24 @@ void character::update () {
 		cs = cos(glm::pi<float>() * -zrot);
 		sn = sin(glm::pi<float>() * -zrot);
 
-		float xn = d[0] * cs - d[1] * sn;
+		xn = d[0] * cs - d[1] * sn;
 		yn = d[0] * sn + d[1] * cs;
-	
+		
 		d[0] = xn;
 		d[1] = yn;
-	
+		
 		right = glm::normalize( glm::cross(d, glm::vec3(0.0f,0.0f,1.0f)) );
 		up = glm::normalize(glm::cross(d, right));
-	
+		
 		nearDist = nclip;
 		Hnear = glm::tan( fov/2.0f ) * nearDist;
 		Wnear = Hnear * ratio;
-	
+		
 		farDist = fclip;
 		Hfar = glm::tan( fov/2.0f ) * farDist;
 		Wfar = Hfar * ratio;
-	
+		
+		
 		view_frustum.fc = p + d * farDist;
 		view_frustum.ftl = view_frustum.fc + (up * Hfar) - (right * Wfar);
 		view_frustum.ftr = view_frustum.fc + (up * Hfar) + (right * Wfar);

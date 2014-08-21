@@ -16,7 +16,7 @@
 using namespace std;
 
 settings* engine_settings = new settings();
-character* player = new character(0.0f, 0.0f, 65.0f, engine_settings->getRatio());
+character* player = new character(0.0f, 0.0f, 74.0f, engine_settings->getRatio());
 
 static int update = 0;
 int playerxpos = int( player->getXpos() / 16 );
