@@ -10,6 +10,7 @@
 		GLfloat buffer_two[2048];
 		GLfloat buffer_three[256];
 		GLfloat buffer_four[32];
+		GLfloat buffer_five[4];
 		GLuint vbo_one;
 		int count_one;
 		GLuint vbo_two;
@@ -18,6 +19,8 @@
 		int count_three;
 		GLuint vbo_four;
 		int count_four;
+		GLuint vbo_five;
+		int count_five;
 		
 		int flag;
 		
@@ -25,7 +28,7 @@
 			segment ();
 			void init ();
 			void updateGLBuffer ();
-			void render (GLuint, GLuint);
+			void render (int, GLuint, GLuint);
 			void setFlag (char);
 			void setCounter (int, int);
 			float (*getData())[16][16];

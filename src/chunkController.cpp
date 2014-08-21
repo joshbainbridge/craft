@@ -233,7 +233,7 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 					ypos = ( playerypos - 4 ) + yseg;
 					zpos = zseg;
 					
-					for (int detail = 0; detail < 4; detail++) {
+					for (int detail = 0; detail < 5; detail++) {
 						
 						//Set instance count to 0
 						count = 0;
@@ -254,9 +254,9 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 										
 										//If check flag is 1 then add voxel to buffer
 										if ( check == 1 ) {
-											segment->getBuffer(detail + 1)[count] = (float) xvox + (float) xpos * 16.0f;
-											segment->getBuffer(detail + 1)[count + 1] = (float) yvox + (float) ypos * 16.0f;
-											segment->getBuffer(detail + 1)[count + 2] = (float) zvox + (float) zpos * 16.0f;
+											segment->getBuffer(detail + 1)[count] = (float) xvox * (16 / size) + (float) xpos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 1] = (float) yvox * (16 / size) + (float) ypos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 2] = (float) zvox * (16 / size) + (float) zpos * 16.0f;
 											segment->getBuffer(detail + 1)[count + 3] = 16.0f / size;
 											count += 4;
 										}
@@ -298,8 +298,8 @@ chunkController::chunkController (character* player) {
 		}
 	}
 	
-	int playerxpos = int( player->getXpos() / 16 );
-	int playerypos = int( player->getYpos() / 16 );
+	int playerxpos = std::floor( player->getXpos() / 16 );
+	int playerypos = std::floor( player->getYpos() / 16 );
 	
 	dataConstructor(playerxpos, playerypos, chunk_list);
 	bufferConstructor(playerxpos, playerypos, chunk_list);
@@ -316,9 +316,9 @@ chunkController::~chunkController () {
 
 void chunkController::updateSegFlag (character* player) {
 	int xold = player->getXseg();
-	int xnew = int( player->getXpos() / 16 );
+	int xnew = std::floor( player->getXpos() / 16 );
 	int yold = player->getYseg();
-	int ynew = int( player->getYpos() / 16 );
+	int ynew = std::floor( player->getYpos() / 16 );
 	
 	int xdif = xnew - xold;
 	int ydif = ynew - yold;
@@ -383,13 +383,15 @@ void chunkController::updateSegFlag (character* player) {
 		}
 	}
 	
-	player->setXseg(xnew);
-	player->setYseg(ynew);
+	if (xdif != 0 || ydif != 0) {
+		player->setXseg(xnew);
+		player->setYseg(ynew);
+	}
 }
 
 void chunkController::updateData (character* player) {
-	int playerxpos = int( player->getXpos() / 16 );
-	int playerypos = int( player->getYpos() / 16 );
+	int playerxpos = std::floor( player->getXpos() / 16 );;
+	int playerypos = std::floor( player->getYpos() / 16 );
 	
 	dataConstructor(playerxpos, playerypos, chunk_list);
 	bufferConstructor(playerxpos, playerypos, chunk_list);
@@ -408,16 +410,35 @@ void chunkController::updateBuffer () {
 void chunkController::render (character* player, shaderVoxel* shader) {
 	int countin = 0;
 	int countout = 0;
+	int ni;
+	int nj;
+	int detail = 1;
+	
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
 			for (int k = 0; k < 8; k++) {
-				//Set back to 1
+				
+				ni = i - 4;
+				if (ni < 0)
+					ni *= -1;
+				
+				nj = j - 4;
+				if (nj < 0)
+					nj *= -1;
+				
+				if (ni >= nj) {
+					detail = ni + 1;
+				} else {
+					detail = nj + 1;
+				}
+				
 				if (player->frustumCheck(float( (player->getXseg() - 4 + i) * 16 + 8), float( (player->getYseg() - 4 + j) * 16 + 8), float(k * 16 + 8), 11.32f) == 1) {
-					chunk_list[i][j]->getSeg(k)->render( shader->getCoordAttrib(), shader->getScaleAttrib() );
+					chunk_list[i][j]->getSeg(k)->render( detail, shader->getCoordAttrib(), shader->getScaleAttrib() );
 					countin++;
 				} else {
 					countout++;
 				}
+				
 			}
 		}
 	}

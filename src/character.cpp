@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_inverse.hpp> 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <cmath>
 #include <iostream>
 
 character::character () {
@@ -346,7 +347,7 @@ int character::getYseg () {
 }
 
 int character::checkSeg () {
-	if (xseg != int( xpos / 16 ) || yseg != int( ypos / 16 )) {
+	if (xseg != std::floor( xpos / 16 ) || yseg != std::floor( ypos / 16 )) {
 		return 1;
 	} else {
 		return 0;
