@@ -3,6 +3,7 @@
 #include <craft/segment.hpp>
 #include <craft/simplex.hpp>
 
+#include <cmath>
 #include <iostream>
 
 void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
@@ -77,7 +78,7 @@ void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<
 	}
 	
 }
-
+/* Old bufferConstructor for constant voxel detail
 void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
 	
 	segment* segment;
@@ -182,7 +183,8 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 										segment->getBuffer()[count] = (float) xvox + (float) xpos * 16.0f;
 										segment->getBuffer()[count + 1] = (float) yvox + (float) ypos * 16.0f;
 										segment->getBuffer()[count + 2] = (float) zvox + (float) zpos * 16.0f;
-										count += 3;
+										segment->getBuffer()[count + 3] = 1.0f;
+										count += 4;
 									}
 								}
 							
@@ -196,6 +198,84 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 				
 				}
 				
+				//Set segment flag for updating VBO
+				chunk_list[xseg][yseg]->setFlag(0);
+				
+			}
+		}
+	}
+	
+}
+*/
+void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
+	
+	segment* segment;
+	
+	int xpos;
+	int ypos;
+	int zpos;
+	
+	int size = 0;
+	int count = 0;
+	int check = 0;
+	
+	//Loop through each segment establishing xseg, yseg and zseg
+	for (int xseg = 0; xseg < 9; xseg++) {
+		for (int yseg = 0; yseg < 9; yseg++) {
+			if (chunk_list[xseg][yseg]->getFlag() == 1) {
+				for (int zseg = 0; zseg < 8; zseg++) {
+				
+					//Set pointer to current segment
+					segment = chunk_list[xseg][yseg]->getSeg(zseg);
+				
+					//Get current virtual postion of segment 
+					xpos = ( playerxpos - 4 ) + xseg;
+					ypos = ( playerypos - 4 ) + yseg;
+					zpos = zseg;
+					
+					for (int detail = 0; detail < 4; detail++) {
+						
+						//Set instance count to 0
+						count = 0;
+						
+						//Get voxel count for detail
+						size = std::pow(2, 4 - detail);
+						
+						//Loop through each voxel establishing xvox, yvox and zvox
+						for (int xvox = 0; xvox < size; xvox++) {
+							for (int yvox = 0; yvox < size; yvox++) {
+								for (int zvox = 0; zvox < size; zvox++) {
+							
+									//Switch check flag to off (testing detail so switched to on)
+									check = 1;
+							
+									//If current voxel is solid
+									if ( segment->getData()[xvox * (16 / size)][yvox * (16 / size)][zvox * (16 / size)] < 0 ) {
+										
+										//If check flag is 1 then add voxel to buffer
+										if ( check == 1 ) {
+											segment->getBuffer(detail + 1)[count] = (float) xvox + (float) xpos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 1] = (float) yvox + (float) ypos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 2] = (float) zvox + (float) zpos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 3] = 16.0f / size;
+											count += 4;
+										}
+										
+									}
+							
+							
+								}
+							}
+						}
+						
+						//Set instance counter for segment
+						segment->setCounter(detail + 1, count);
+						
+					}
+				
+				}
+				
+				//Set segment flag for updating VBO
 				chunk_list[xseg][yseg]->setFlag(0);
 				
 			}
@@ -333,7 +413,7 @@ void chunkController::render (character* player, shaderVoxel* shader) {
 			for (int k = 0; k < 8; k++) {
 				//Set back to 1
 				if (player->frustumCheck(float( (player->getXseg() - 4 + i) * 16 + 8), float( (player->getYseg() - 4 + j) * 16 + 8), float(k * 16 + 8), 11.32f) == 1) {
-					chunk_list[i][j]->getSeg(k)->render( shader->getCoordAttrib() );
+					chunk_list[i][j]->getSeg(k)->render( shader->getCoordAttrib(), shader->getScaleAttrib() );
 					countin++;
 				} else {
 					countout++;
@@ -341,5 +421,5 @@ void chunkController::render (character* player, shaderVoxel* shader) {
 			}
 		}
 	}
-	std::cout << countin << ", " << countout << std::endl;
+	//std::cout << countin << ", " << countout << std::endl;
 }

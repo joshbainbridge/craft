@@ -54,17 +54,21 @@ void shaderVoxel::init (character* player) {
 	vertAttrib = glGetAttribLocation(shader.getProg(), "vertex");
 	uvAttrib = glGetAttribLocation(shader.getProg(), "uv");
 	coordAttrib = glGetAttribLocation(shader.getProg(), "coordinate");
+	scaleAttrib = glGetAttribLocation(shader.getProg(), "scale");
 	
 	uniView = glGetUniformLocation(shader.getProg(), "view");
 	uniProj = glGetUniformLocation(shader.getProg(), "proj");
 	
-	glEnableVertexAttribArray(coordAttrib);
 	glEnableVertexAttribArray(vertAttrib);
 	glEnableVertexAttribArray(uvAttrib);
+	glEnableVertexAttribArray(coordAttrib);
+	glEnableVertexAttribArray(scaleAttrib);
 	
 	glVertexAttribDivisor(vertAttrib, 0);
 	glVertexAttribDivisor(uvAttrib, 0);
 	glVertexAttribDivisor(coordAttrib, 1);
+	glVertexAttribDivisor(scaleAttrib, 1);
+	
 	
 	// Vertex Buffer
 	glGenBuffers(1, &vbo);
@@ -102,4 +106,8 @@ GLuint shaderVoxel::getUniProj () {
 
 GLuint shaderVoxel::getCoordAttrib () {
 	return coordAttrib;
+}
+
+GLuint shaderVoxel::getScaleAttrib () {
+	return scaleAttrib;
 }

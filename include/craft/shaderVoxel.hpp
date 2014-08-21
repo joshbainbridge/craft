@@ -22,9 +22,10 @@
 		GLuint ebo;
 		
 		GLuint coordAttrib;
+		GLuint scaleAttrib;
 		GLuint vertAttrib;
 		GLuint uvAttrib;
-	
+		
 		GLuint uniView;
 		GLuint uniProj;
 		
@@ -36,6 +37,7 @@
 			GLuint getUniView ();
 			GLuint getUniProj ();
 			GLuint getCoordAttrib ();
+			GLuint getScaleAttrib ();
 	};
 	
 #endif

@@ -3,6 +3,7 @@
 in vec3 vertex;
 in vec2 uv;
 in vec3 coordinate;
+in float scale;
 
 out vec3 Color;
 
@@ -19,5 +20,5 @@ void main()
 	camera = vec3(inverted[3][0], inverted[3][1], inverted[3][2]);
 	fog = ( distance(camera, coordinate) / 64 ) * -1 + 1;
 	Color = vec3(1 * ( sin(coordinate[0]*0.03) * 0.5 + 0.5 ), 1 * ( sin(coordinate[1]*0.02) * 0.5 + 0.5 ), 1 * ( sin(coordinate[2]*0.025) * 0.5 + 0.5 )) * fog;
-    gl_Position = proj * view * vec4(vertex + coordinate, 1.0);
+    gl_Position = proj * view * vec4((vertex * scale) + coordinate, 1.0);
 }
