@@ -56,7 +56,7 @@ void character::init () {
 	view = glm::rotate(view, glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
 	view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(1, 0, 0));
 	
-	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip));
+	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip + 2));
 	p = glm::vec3(view[3][0], view[3][1], view[3][2]);
 	
 	view = glm::affineInverse(view);
@@ -206,7 +206,7 @@ void character::update () {
 		ypos = view[3][1];
 		zpos = view[3][2];
 		
-		view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip));
+		view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip + 2));
 		p = glm::vec3(view[3][0], view[3][1], view[3][2]);
 		
 		view = glm::affineInverse(view);
