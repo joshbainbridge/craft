@@ -78,135 +78,22 @@ void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<
 	}
 	
 }
-/* Old bufferConstructor for constant voxel detail
-void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
+
+float voxelSum(segment* segment, int multi, int x, int y, int z) {
+	float value = 0;
+	int xn = x * multi;
+	int yn = y * multi;
+	int zn = z * multi;
 	
-	segment* segment;
-	
-	int xpos;
-	int ypos;
-	int zpos;
-	
-	int count = 0;
-	int check = 0;
-	
-	//Loop through each segment establishing xseg, yseg and zseg
-	for (int xseg = 0; xseg < 9; xseg++) {
-		for (int yseg = 0; yseg < 9; yseg++) {
-			if (chunk_list[xseg][yseg]->getFlag() == 1) {
-				for (int zseg = 0; zseg < 8; zseg++) {
-				
-					//Set pointer to current segment
-					segment = chunk_list[xseg][yseg]->getSeg(zseg);
-				
-					//Get current virtual postion of segment 
-					xpos = ( playerxpos - 4 ) + xseg;
-					ypos = ( playerypos - 4 ) + yseg;
-					zpos = zseg;
-				
-					//Set instance count to 0
-					count = 0;
-				
-					//Loop through each voxel establishing xvox, yvox and zvox
-					for (int xvox = 0; xvox < 16; xvox++) {
-						for (int yvox = 0; yvox < 16; yvox++) {
-							for (int zvox = 0; zvox < 16; zvox++) {
-							
-								//Switch check flag to off
-								check = 0;
-							
-								//If current voxel is solid
-								if ( segment->getData()[xvox][yvox][zvox] < 0 ) {
-								
-									//Check if West voxel is not solid
-									if ( xvox == 0 ) {
-										if ( xseg != 0 )
-											if (chunk_list[xseg - 1][yseg]->getSeg(zseg)->getData()[15][yvox][zvox] > 0)
-												check = 1;
-									} else {
-										if (segment->getData()[xvox - 1][yvox][zvox] > 0)
-											check = 1;
-									}
-								
-									//Check if East voxel is not solid
-									if ( xvox == 15 ) {
-										if ( xseg != 8 )
-											if (chunk_list[xseg + 1][yseg]->getSeg(zseg)->getData()[0][yvox][zvox] > 0)
-												check = 1;
-									} else {
-										if (segment->getData()[xvox + 1][yvox][zvox] > 0)
-											check = 1;
-									}
-								
-									//Check if South voxel is not solid
-									if ( yvox == 0 ) {
-										if ( yseg != 0 )
-											if (chunk_list[xseg][yseg - 1]->getSeg(zseg)->getData()[xvox][15][zvox] > 0)
-												check = 1;
-									} else {
-										if (segment->getData()[xvox][yvox - 1][zvox] > 0)
-											check = 1;
-									}
-								
-									//Check if North voxel is not solid
-									if ( yvox == 15 ) {
-										if ( yseg != 8 )
-											if (chunk_list[xseg][yseg + 1]->getSeg(zseg)->getData()[xvox][0][zvox] > 0)
-												check = 1;
-									} else {
-										if (segment->getData()[xvox][yvox + 1][zvox] > 0)
-											check = 1;
-									}
-								
-									//Check if Lower voxel is not solid
-									if ( zvox == 0 ) {
-										if ( zseg != 0 )
-											if (chunk_list[xseg][yseg]->getSeg(zseg - 1)->getData()[xvox][yvox][15] > 0)
-												check = 1;
-									} else {
-										if (segment->getData()[xvox][yvox][zvox - 1] > 0)
-											check = 1;
-									}
-								
-									//Check if Upper voxel is not solid
-									if ( zvox == 15 ) {
-										if ( zseg != 7 )
-											if (chunk_list[xseg][yseg]->getSeg(zseg + 1)->getData()[xvox][yvox][0] > 0)
-												check = 1;
-									} else {
-										if (segment->getData()[xvox][yvox][zvox + 1] > 0)
-											check = 1;
-									}
-								
-									//If check flag is 1 then add voxel to buffer
-									if ( check == 1 ) {
-										segment->getBuffer()[count] = (float) xvox + (float) xpos * 16.0f;
-										segment->getBuffer()[count + 1] = (float) yvox + (float) ypos * 16.0f;
-										segment->getBuffer()[count + 2] = (float) zvox + (float) zpos * 16.0f;
-										segment->getBuffer()[count + 3] = 1.0f;
-										count += 4;
-									}
-								}
-							
-							
-							}
-						}
-					}
-				
-					//Set instance counter for segment
-					segment->setCounter(count);
-				
-				}
-				
-				//Set segment flag for updating VBO
-				chunk_list[xseg][yseg]->setFlag(0);
-				
-			}
-		}
+	for (int i = 0; i < multi; i++) {
+		value += segment->getData()[xn + i][yn + i][zn + i];
 	}
 	
+	value /= multi;
+	
+	return value;
 }
-*/
+
 void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
 	
 	segment* segment;
@@ -216,6 +103,7 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 	int zpos;
 	
 	int size = 0;
+	int multi = 0;
 	int count = 0;
 	int check = 0;
 	
@@ -240,24 +128,85 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 						
 						//Get voxel count for detail
 						size = std::pow(2, 4 - detail);
+						multi = (16 / size);
 						
 						//Loop through each voxel establishing xvox, yvox and zvox
 						for (int xvox = 0; xvox < size; xvox++) {
 							for (int yvox = 0; yvox < size; yvox++) {
 								for (int zvox = 0; zvox < size; zvox++) {
-							
+									
 									//Switch check flag to off (testing detail so switched to on)
-									check = 1;
-							
+									check = 0;
+									
 									//If current voxel is solid
-									if ( segment->getData()[xvox * (16 / size)][yvox * (16 / size)][zvox * (16 / size)] < 0 ) {
+									if ( voxelSum(segment, multi, xvox, yvox, zvox) < 0 ) {
+										
+										//Check if West voxel is not solid
+										if ( xvox == 0 ) {
+											if ( xseg != 0 )
+												if (voxelSum(chunk_list[xseg - 1][yseg]->getSeg(zseg), multi, size - 1, yvox, zvox) > 0)
+													check = 1;
+										} else {
+											if (voxelSum(segment, multi, xvox - 1, yvox, zvox) > 0)
+												check = 1;
+										}
+								
+										//Check if East voxel is not solid
+										if ( xvox == size - 1 ) {
+											if ( xseg != 8 )
+												if (voxelSum(chunk_list[xseg + 1][yseg]->getSeg(zseg), multi, 0, yvox, zvox) > 0)
+													check = 1;
+										} else {
+											if (voxelSum(segment, multi, xvox + 1, yvox, zvox) > 0)
+												check = 1;
+										}
+								
+										//Check if South voxel is not solid
+										if ( yvox == 0 ) {
+											if ( yseg != 0 )
+												if (voxelSum(chunk_list[xseg][yseg - 1]->getSeg(zseg), multi, xvox, size - 1, zvox) > 0)
+													check = 1;
+										} else {
+											if (voxelSum(segment, multi, xvox, yvox - 1, zvox) > 0)
+												check = 1;
+										}
+								
+										//Check if North voxel is not solid
+										if ( yvox == size - 1 ) {
+											if ( yseg != 8 )
+												if (voxelSum(chunk_list[xseg][yseg + 1]->getSeg(zseg), multi, xvox, 0, zvox) > 0)
+													check = 1;
+										} else {
+											if (voxelSum(segment, multi, xvox, yvox + 1, zvox) > 0)
+												check = 1;
+										}
+								
+										//Check if Lower voxel is not solid
+										if ( zvox == 0 ) {
+											if ( zseg != 0 )
+												if (voxelSum(chunk_list[xseg][yseg]->getSeg(zseg - 1), multi, xvox, yvox, size - 1) > 0)
+													check = 1;
+										} else {
+											if (voxelSum(segment, multi, xvox, yvox, zvox - 1) > 0)
+												check = 1;
+										}
+								
+										//Check if Upper voxel is not solid
+										if ( zvox == size - 1 ) {
+											if ( zseg != 7 )
+												if (voxelSum(chunk_list[xseg][yseg]->getSeg(zseg + 1), multi, xvox, yvox, 0) > 0)
+													check = 1;
+										} else {
+											if (voxelSum(segment, multi, xvox, yvox, zvox + 1) > 0)
+												check = 1;
+										}
 										
 										//If check flag is 1 then add voxel to buffer
 										if ( check == 1 ) {
-											segment->getBuffer(detail + 1)[count] = (float) xvox * (16 / size) + (float) xpos * 16.0f;
-											segment->getBuffer(detail + 1)[count + 1] = (float) yvox * (16 / size) + (float) ypos * 16.0f;
-											segment->getBuffer(detail + 1)[count + 2] = (float) zvox * (16 / size) + (float) zpos * 16.0f;
-											segment->getBuffer(detail + 1)[count + 3] = 16.0f / size;
+											segment->getBuffer(detail + 1)[count] = (float) xvox * multi + (float) xpos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 1] = (float) yvox * multi + (float) ypos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 2] = (float) zvox * multi + (float) zpos * 16.0f;
+											segment->getBuffer(detail + 1)[count + 3] = (float) multi;
 											count += 4;
 										}
 										
