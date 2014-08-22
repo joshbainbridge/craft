@@ -42,6 +42,8 @@
 		float zrot, xrot;
 		int zrdown, xrdown;
 		float zrvel, xrvel;
+		float xlimitmax, xlimitmin;
+		float zlimitmax, zlimitmin;
 		
 		int flag;
 		

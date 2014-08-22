@@ -21,7 +21,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	
 	fov = 1.0f;
 	ratio = ratio_input;
-	nclip = 2.0f;
+	nclip = 25.0f;
 	fclip = 80.0f;
 	
 	xdown = 0;
@@ -34,6 +34,11 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	
 	xrot = 0.5f;
 	zrot = 0.0f;
+	
+	zlimitmax = zrot + 0.5f;
+	zlimitmin = zrot - 0.5f;
+	xlimitmax = xrot + 0.25f;
+	xlimitmin = xrot - 0.25f;
 	
 	xrdown = 0;
 	zrdown = 0;
@@ -51,17 +56,22 @@ void character::init () {
 	view = glm::rotate(view, glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
 	view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(1, 0, 0));
 	
+	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip));
+	p = glm::vec3(view[3][0], view[3][1], view[3][2]);
+	
 	view = glm::affineInverse(view);
 	
-	proj = glm::perspective(
-		fov,
-		ratio,
+	int scale = 9;
+	proj = glm::ortho(
+		-8.0f * scale,
+		8.0f * scale,
+		-8.0f * scale / ratio,
+		8.0f * scale / ratio,
 		nclip,
 		fclip
 	);
 	
 	
-	p = glm::vec3(xpos, ypos, zpos);
 	d = glm::vec3(0.0f, 0.0f, -1.0f);
 	
 	cs = cos(glm::pi<float>() * xrot);
@@ -85,13 +95,14 @@ void character::init () {
 	right = glm::normalize( glm::cross(d, glm::vec3(0.0f,0.0f,1.0f)) );
 	up = glm::normalize(glm::cross(d, right));
 	
-	nearDist = nclip;
-	Hnear = glm::tan( fov/2.0f ) * nearDist;
-	Wnear = Hnear * ratio;
+	nearDist = nclip - 8.0f;
+	Hnear = 8.0f * scale / ratio;
+	Wnear = 8.0f * scale;
 	
-	farDist = fclip;
-	Hfar = glm::tan( fov/2.0f ) * farDist;
-	Wfar = Hfar * ratio;
+	farDist = fclip + 8.0f;
+	Hfar = 8.0f * scale / ratio;
+	Wfar = 8.0f * scale;
+	
 	
 	view_frustum.fc = p + d * farDist;
 	view_frustum.ftl = view_frustum.fc + (up * Hfar) - (right * Wfar);
@@ -134,34 +145,73 @@ void character::update () {
 			zvel -= 0.3f;
 		}
 	
+		if (xrdown == 1) {
+			if (xrot < 1.0f) {
+				xrvel += 0.01f;
+				if (xrot + xrvel < xlimitmax) {
+					xrot = xrot + xrvel;
+				} else {
+					xrot = xlimitmax;
+					xlimitmax = xrot + 0.25f;
+					xlimitmin = xrot - 0.25f;
+					xrdown = 0;
+				}
+			}
+		}
+		
+		if (xrdown == -1) {
+			if (xrot > 0.0f) {
+				xrvel -= 0.01f;
+				if (xrot + xrvel > xlimitmin) {
+					xrot = xrot + xrvel;
+				} else {
+					xrot = xlimitmin;
+					xlimitmax = xrot + 0.25f;
+					xlimitmin = xrot - 0.25f;
+					xrdown = 0;
+				}
+			}
+		}
+		
 		if (zrdown == 1) {
 			zrvel += 0.01f;
-		} else if (zrdown == -1) {
+			if (zrot + zrvel < zlimitmax) {
+				zrot = zrot + zrvel;
+			} else {
+				zrot = zlimitmax;
+				zlimitmax = zrot + 0.5f;
+				zlimitmin = zrot - 0.5f;
+				zrdown = 0;
+			}
+		}
+		
+		if (zrdown == -1) {
 			zrvel -= 0.01f;
+			if (zrot + zrvel > zlimitmin) {
+				zrot = zrot + zrvel;
+			} else {
+				zrot = zlimitmin;
+				zlimitmax = zrot + 0.5f;
+				zlimitmin = zrot - 0.5f;
+				zrdown = 0;
+			}
 		}
-	
-		if (xrdown == 1) {
-			xrvel += 0.01f;
-		} else if (xrdown == -1) {
-			xrvel -= 0.01f;
-		}
-	
-		xrot = xrot + xrvel;
-		zrot = zrot + zrvel;
 		
 		view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
 		view = glm::rotate(view, glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
+		view = view * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, yvel, zvel));
 		view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(1, 0, 0));
-		view = view * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, zvel, -yvel));
 	
 		xpos = view[3][0];
 		ypos = view[3][1];
 		zpos = view[3][2];
-	
+		
+		view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip));
+		p = glm::vec3(view[3][0], view[3][1], view[3][2]);
+		
 		view = glm::affineInverse(view);
 		
 		
-		p = glm::vec3(xpos, ypos, zpos);
 		d = glm::vec3(0.0f, 0.0f, -1.0f);
 	
 		cs = cos(glm::pi<float>() * xrot);
@@ -182,16 +232,17 @@ void character::update () {
 		d[0] = xn;
 		d[1] = yn;
 		
-		right = glm::normalize( glm::cross(d, glm::vec3(0.0f,0.0f,1.0f)) );
+		right = glm::normalize( glm::cross(d, glm::vec3(0.0f,0.00001f,1.0f)) );
 		up = glm::normalize(glm::cross(d, right));
 		
-		nearDist = nclip;
-		Hnear = glm::tan( fov/2.0f ) * nearDist;
-		Wnear = Hnear * ratio;
-		
-		farDist = fclip;
-		Hfar = glm::tan( fov/2.0f ) * farDist;
-		Wfar = Hfar * ratio;
+		int scale = 9;
+		nearDist = nclip - 8.0f;
+		Hnear = 8.0f * scale / ratio;
+		Wnear = 8.0f * scale;
+
+		farDist = fclip + 8.0f;
+		Hfar = 8.0f * scale / ratio;
+		Wfar = 8.0f * scale;
 		
 		
 		view_frustum.fc = p + d * farDist;
@@ -234,7 +285,7 @@ void character::update () {
 		}
 		
 		if (zrvel != 0) {
-			zrvel *= 0.5;
+			zrvel *= 0.9;
 			if ( (zrvel < 0.001f && zrvel > 0.0f) || (zrvel > -0.001f && zrvel < 0.0f) )
 				zrvel = 0; 
 		}

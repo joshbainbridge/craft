@@ -135,12 +135,13 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 							for (int yvox = 0; yvox < size; yvox++) {
 								for (int zvox = 0; zvox < size; zvox++) {
 									
-									//Switch check flag to off (testing detail so switched to on)
-									check = 0;
+									// Neighbour check disabled due to ortho view
+									check = 1;
 									
 									//If current voxel is solid
 									if ( voxelSum(segment, multi, xvox, yvox, zvox) < 0 ) {
 										
+										/* Neighbour check disabled due to ortho view
 										//Check if West voxel is not solid
 										if ( xvox == 0 ) {
 											if ( xseg != 0 )
@@ -199,7 +200,7 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 										} else {
 											if (voxelSum(segment, multi, xvox, yvox, zvox + 1) > 0)
 												check = 1;
-										}
+										}*/
 										
 										//If check flag is 1 then add voxel to buffer
 										if ( check == 1 ) {

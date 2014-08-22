@@ -19,7 +19,6 @@ settings* engine_settings = new settings();
 character* player = new character(0.0f, 0.0f, 74.0f, engine_settings->getRatio());
 
 static int update = 0;
-int playerxpos = int( player->getXpos() / 16 );
 
 GLFWwindow* createWindow(settings* engine_settings) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -69,24 +68,18 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         player->setYdown( 0 );
     
 	
-    if (key == GLFW_KEY_S && action == GLFW_PRESS)
+    if (key == GLFW_KEY_W && action == GLFW_PRESS)
         player->setXrdown( -1 );
 		
-    if (key == GLFW_KEY_W && action == GLFW_PRESS)
+    if (key == GLFW_KEY_S && action == GLFW_PRESS)
         player->setXrdown( 1 );
-		
-    if ( (key == GLFW_KEY_S && action == GLFW_RELEASE) || (key == GLFW_KEY_W && action == GLFW_RELEASE) )
-        player->setXrdown( 0 );
     
 	
-    if (key == GLFW_KEY_A && action == GLFW_PRESS)
+    if (key == GLFW_KEY_D && action == GLFW_PRESS)
         player->setZrdown( -1 );
 		
-    if (key == GLFW_KEY_D && action == GLFW_PRESS)
+    if (key == GLFW_KEY_A && action == GLFW_PRESS)
         player->setZrdown( 1 );
-		
-    if ( (key == GLFW_KEY_A && action == GLFW_RELEASE) || (key == GLFW_KEY_D && action == GLFW_RELEASE) )
-        player->setZrdown( 0 );
 }
 
 void errorContext() {
@@ -128,7 +121,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 	//Set Frame-rate
 	chrono::milliseconds framerate( 1000 / 60 );
 	
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	glPolygonMode( GL_FRONT, GL_FILL );
 	
     while (!glfwWindowShouldClose(window))
     {
