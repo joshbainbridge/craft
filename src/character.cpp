@@ -35,8 +35,8 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	xrot = 0.5f;
 	zrot = 0.0f;
 	
-	zlimitmax = zrot + 0.5f;
-	zlimitmin = zrot - 0.5f;
+	zlimitmax = zrot + 1.0f;
+	zlimitmin = zrot - 1.0f;
 	xlimitmax = xrot + 0.25f;
 	xlimitmin = xrot - 0.25f;
 	
@@ -179,8 +179,8 @@ void character::update () {
 				zrot = zrot + zrvel;
 			} else {
 				zrot = zlimitmax;
-				zlimitmax = zrot + 0.5f;
-				zlimitmin = zrot - 0.5f;
+				zlimitmax = zrot + 1.0f;
+				zlimitmin = zrot - 1.0f;
 				zrdown = 0;
 			}
 		}
@@ -191,8 +191,8 @@ void character::update () {
 				zrot = zrot + zrvel;
 			} else {
 				zrot = zlimitmin;
-				zlimitmax = zrot + 0.5f;
-				zlimitmin = zrot - 0.5f;
+				zlimitmax = zrot + 1.0f;
+				zlimitmin = zrot - 1.0f;
 				zrdown = 0;
 			}
 		}
