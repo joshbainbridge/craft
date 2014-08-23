@@ -38,35 +38,17 @@ void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<
 							
 								//Using simplex noise, generate data for segment 
 								terrain = simplex_noise(
-									3,
+									2,
 									(double) xpos * 16.0l + (double) xvox,
 									(double) ypos * 16.0l + (double) yvox,
 									(double) zpos * 16.0l + (double) zvox,
 									75.0f,
-									0.85f
+									0.45f
 								);
 							
-								terrain += ( ( (float) zvox + (float) zpos * 16) - 64 ) / 24.0f;
+								terrain += ( ( (float) zvox + (float) zpos * 16) - 64 ) / 64.0f;
 							
-								tunnel = simplex_noise(
-									3,
-									(double) xpos * 16.0l + (double) xvox,
-									(double) ypos * 16.0l + (double) yvox,
-									(double) zpos * 16.0l + (double) zvox,
-									100.0f,
-									0.85f
-								);
-							
-								if (tunnel < 0)
-									tunnel *= -1;
-							
-								if (tunnel > 0.3) {
-									tunnel = 3.0f;
-								} else {
-									tunnel = 0.0f;
-								}
-							
-								segment->getData()[xvox][yvox][zvox] = terrain + tunnel;
+								segment->getData()[xvox][yvox][zvox] = terrain;
 							
 							}
 						}
