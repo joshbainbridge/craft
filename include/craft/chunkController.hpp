@@ -20,8 +20,7 @@
 			void updateData (character*);
 			void updateBuffer ();
 			void render (character*, shaderVoxel*);
-			void setFlag (int);
-			int getFlag ();
+			std::vector< std::vector<chunk*> >* getChunkList();
 	};
 	
 #endif

@@ -120,12 +120,12 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 								for (int zvox = 0; zvox < size; zvox++) {
 									
 									// Neighbour check disabled due to ortho view
-									check = 1;
+									check = 0;
 									
 									//If current voxel is solid
 									if ( voxelSum(segment, multi, xvox, yvox, zvox) < 0 ) {
 										
-										/* Neighbour check disabled due to ortho view
+										//* Neighbour check disabled due to ortho view
 										//Check if West voxel is not solid
 										if ( xvox == 0 ) {
 											if ( xseg != 0 )
@@ -184,7 +184,7 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 										} else {
 											if (voxelSum(segment, multi, xvox, yvox, zvox + 1) > 0)
 												check = 1;
-										}*/
+										}//*/
 										
 										//If check flag is 1 then add voxel to buffer
 										if ( check == 1 ) {
@@ -377,10 +377,13 @@ void chunkController::render (character* player, shaderVoxel* shader) {
 					nj *= -1;
 				
 				if (ni >= nj) {
-					detail = ni + 1;
+					detail = ni;
 				} else {
-					detail = nj + 1;
+					detail = nj;
 				}
+				
+				if (detail == 0)
+					detail = 1;
 				
 				if (player->frustumCheck(float( (player->getXseg() - 4 + i) * 16 + 8), float( (player->getYseg() - 4 + j) * 16 + 8), float(k * 16 + 8), 11.32f) == 1) {
 					chunk_list[i][j]->getSeg(k)->render( detail, shader->getCoordAttrib(), shader->getScaleAttrib() );
@@ -388,9 +391,12 @@ void chunkController::render (character* player, shaderVoxel* shader) {
 				} else {
 					countout++;
 				}
-				
 			}
 		}
 	}
 	//std::cout << countin << ", " << countout << std::endl;
+}
+
+std::vector< std::vector<chunk*> >* chunkController::getChunkList() {
+	return &chunk_list;
 }

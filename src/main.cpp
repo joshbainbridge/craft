@@ -16,7 +16,7 @@
 using namespace std;
 
 settings* engine_settings = new settings();
-character* player = new character(0.0f, 0.0f, 74.0f, engine_settings->getRatio());
+character* player = new character(4.0f, 16.0f, 124.0f, engine_settings->getRatio());
 
 GLFWwindow* createWindow(settings* engine_settings) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -42,7 +42,7 @@ GLFWwindow* createWindow(settings* engine_settings) {
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if ( (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) || (key == GLFW_KEY_Q && action == GLFW_PRESS) )
         glfwSetWindowShouldClose(window, GL_TRUE);
     
 		
@@ -64,6 +64,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		
     if ( (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) || (key == GLFW_KEY_UP && action == GLFW_RELEASE) )
         player->setYdown( 0 );
+	
+		
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+        player->setZdown( 1 );
     
 	
     if (key == GLFW_KEY_W && action == GLFW_PRESS)
@@ -119,7 +123,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 	//Set Frame-rate
 	chrono::milliseconds framerate( 1000 / 60 );
 	
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	glPolygonMode( GL_FRONT, GL_FILL );
 	
     while (!glfwWindowShouldClose(window))
     {

@@ -71,8 +71,11 @@
 		float yn;
 		float zn;
 		
+		GLfloat buffer[4];
+		GLuint vbo;
+		
 		void velocity ();
-		void collision ();
+		void collision (chunkController*);
 		void transform ();
 		void frustumBuild ();
 		void setFlagAuto();

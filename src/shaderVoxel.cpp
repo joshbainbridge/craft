@@ -9,18 +9,18 @@ shaderVoxel::shaderVoxel (character* player) {
 
 void shaderVoxel::init (character* player) {
 	
-	GLfloat vertices_input[40] = {
-		0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f, 0.0f, 1.0f
+	GLfloat vertices_input[64] = {
+		0.0f, 1.0f, 1.0f, 1.0f, 0.0f, -1.0f,  1.0f,  1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  1.0f,  1.0f,  1.0f,
+		0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, -1.0f,  1.0f,
+		1.0f, 0.0f, 1.0f, 1.0f, 0.0f,  1.0f, -1.0f,  1.0f,
+		0.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f,  1.0f, -1.0f,
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f,  1.0f,  1.0f, -1.0f,
+		0.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+		1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  1.0f, -1.0f, -1.0f
 	};
 	
-	for (int i = 0; i < 40; i++) {
+	for (int i = 0; i < 64; i++) {
 		vertices[i] = vertices_input[i];
 	}
 	
@@ -55,6 +55,7 @@ void shaderVoxel::init (character* player) {
 	uvAttrib = glGetAttribLocation(shader.getProg(), "uv");
 	coordAttrib = glGetAttribLocation(shader.getProg(), "coordinate");
 	scaleAttrib = glGetAttribLocation(shader.getProg(), "scale");
+	normAttrib = glGetAttribLocation(shader.getProg(), "norm");
 	
 	uniView = glGetUniformLocation(shader.getProg(), "view");
 	uniProj = glGetUniformLocation(shader.getProg(), "proj");
@@ -63,9 +64,11 @@ void shaderVoxel::init (character* player) {
 	glEnableVertexAttribArray(uvAttrib);
 	glEnableVertexAttribArray(coordAttrib);
 	glEnableVertexAttribArray(scaleAttrib);
+	glEnableVertexAttribArray(normAttrib);
 	
 	glVertexAttribDivisor(vertAttrib, 0);
 	glVertexAttribDivisor(uvAttrib, 0);
+	glVertexAttribDivisor(normAttrib, 0);
 	glVertexAttribDivisor(coordAttrib, 1);
 	glVertexAttribDivisor(scaleAttrib, 1);
 	
@@ -75,8 +78,9 @@ void shaderVoxel::init (character* player) {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	
-	glVertexAttribPointer(vertAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float)*5, 0);
-	glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(float)*5, (const void*) (sizeof(float)*3));
+	glVertexAttribPointer(vertAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float)*8, 0);
+	glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(float)*8, (const void*) (sizeof(float)*3));
+	glVertexAttribPointer(normAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float)*8, (const void*) (sizeof(float)*5));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	// Element Buffer

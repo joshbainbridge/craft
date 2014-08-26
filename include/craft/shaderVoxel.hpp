@@ -12,7 +12,7 @@
 	
 	class shaderVoxel {
 		
-		GLfloat vertices[40];
+		GLfloat vertices[64];
 		GLuint elements[36];
 		
 		shaderProgram shader;
@@ -25,6 +25,7 @@
 		GLuint scaleAttrib;
 		GLuint vertAttrib;
 		GLuint uvAttrib;
+		GLuint normAttrib;
 		
 		GLuint uniView;
 		GLuint uniProj;
