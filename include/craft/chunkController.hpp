@@ -10,15 +10,18 @@
 
 	class chunkController {
 		std::vector< std::vector<chunk*> > chunk_list;
+		int flag;
 		
 		public:
 			chunkController ();
 			chunkController (character*);
 			~chunkController ();
-			void updateSegFlag(character*);
-			void updateData(character*);
-			void updateBuffer();
-			void render(character*, shaderVoxel*);
+			void updateSegFlag (character*);
+			void updateData (character*);
+			void updateBuffer ();
+			void render (character*, shaderVoxel*);
+			void setFlag (int);
+			int getFlag ();
 	};
 	
 #endif

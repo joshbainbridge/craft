@@ -6,6 +6,10 @@
 	
 	#include <glm/glm.hpp>
 	
+	//Forward reference
+	class shaderVoxel;
+	class chunkController;
+	
 	struct frustum {
 		
 		glm::vec3 fc;
@@ -32,6 +36,9 @@
 		float ratio;
 		float nclip;
 		float fclip;
+		int scale;
+		
+		int size;
 		
 		int xseg, yseg;
 		
@@ -64,11 +71,18 @@
 		float yn;
 		float zn;
 		
+		void velocity ();
+		void collision ();
+		void transform ();
+		void frustumBuild ();
+		void setFlagAuto();
+		
 		public:
 			character ();
 			character (float, float, float, float);
 			void init ();
-			void update ();
+			void update (chunkController*);
+			void updateUni(shaderVoxel*);
 			int frustumCheck(float, float, float, float);
 			void setXdown (int);
 			void setYdown (int);
@@ -81,7 +95,6 @@
 			void setNclip (float input);
 			void setFclip (float input);
 			void setFlag (int);
-			void setFlagAuto();
 			glm::mat4 getView ();
 			glm::mat4 getProj ();
 			float getXpos ();
@@ -89,7 +102,6 @@
 			float getZpos ();
 			int getXseg ();
 			int getYseg ();
-			int checkSeg ();
 			float getFov ();
 			float getNclip ();
 			float getFclip ();

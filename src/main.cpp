@@ -18,8 +18,6 @@ using namespace std;
 settings* engine_settings = new settings();
 character* player = new character(0.0f, 0.0f, 74.0f, engine_settings->getRatio());
 
-static int update = 0;
-
 GLFWwindow* createWindow(settings* engine_settings) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -134,16 +132,9 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		// Update
-		if (player->getFlag() == 2) {
-			glUniformMatrix4fv(shader->getUniView(), 1, GL_FALSE, glm::value_ptr( player->getView() ));
-			glUniformMatrix4fv(shader->getUniProj(), 1, GL_FALSE, glm::value_ptr( player->getProj() ));
-			player->setFlagAuto();
-		}
+		player->updateUni(shader);
 		
-		if (update == 1) {
-			chunkController01->updateBuffer();
-			update = 0;
-		}
+		chunkController01->updateBuffer();
 		
         //Render
         chunkController01->render(player, shader);
@@ -165,7 +156,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
     }
 }
 
-void threadSecondary (GLFWwindow* window, character* player) {
+void threadSecondary (GLFWwindow* window, chunkController* chunkController01, character* player) {
 	
 	//Set Frame-rate
 	chrono::milliseconds framerate( 1000 / 20 );
@@ -176,7 +167,7 @@ void threadSecondary (GLFWwindow* window, character* player) {
     	auto start_time = chrono::high_resolution_clock::now();
         
         //Update
-        player->update();
+        player->update(chunkController01);
 		
 		//Sleep
 		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
@@ -201,12 +192,8 @@ void threadTertiary (GLFWwindow* window, chunkController* chunkController01, cha
         
         
         //Update
-		
-		if ( player->checkSeg() == 1 && update == 0 ) {
-			chunkController01->updateSegFlag(player);
-			chunkController01->updateData(player);
-			update = 1;
-		}
+		chunkController01->updateSegFlag(player);
+		chunkController01->updateData(player);
 		
 		//Sleep
 		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
@@ -227,7 +214,7 @@ int main(void)
 	
 	chunkController* chunkController01 = new chunkController(player);
 	
-	thread threadLogic(threadSecondary, window, player);
+	thread threadLogic(threadSecondary, window, chunkController01, player);
 	thread threadData(threadTertiary, window, chunkController01, player);
 	
 	threadPrimary(window, chunkController01, player, shader);

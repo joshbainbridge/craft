@@ -55,6 +55,8 @@ void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<
 					}
 				
 				}
+				
+			chunk_list[xseg][yseg]->setFlag(2);
 			}
 		}
 	}
@@ -92,7 +94,7 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 	//Loop through each segment establishing xseg, yseg and zseg
 	for (int xseg = 0; xseg < 9; xseg++) {
 		for (int yseg = 0; yseg < 9; yseg++) {
-			if (chunk_list[xseg][yseg]->getFlag() == 1) {
+			if (chunk_list[xseg][yseg]->getFlag() == 2) {
 				for (int zseg = 0; zseg < 8; zseg++) {
 				
 					//Set pointer to current segment
@@ -208,7 +210,7 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 				}
 				
 				//Set segment flag for updating VBO
-				chunk_list[xseg][yseg]->setFlag(0);
+				chunk_list[xseg][yseg]->setFlag(3);
 				
 			}
 		}
@@ -220,6 +222,7 @@ chunkController::chunkController () {
 }
 
 chunkController::chunkController (character* player) {
+	flag = 1;
 	
 	chunk_list.resize(9);
 	for (int i = 0; i < 9; i++) {
@@ -247,95 +250,110 @@ chunkController::~chunkController () {
 }
 
 void chunkController::updateSegFlag (character* player) {
-	int xold = player->getXseg();
-	int xnew = std::floor( player->getXpos() / 16 );
-	int yold = player->getYseg();
-	int ynew = std::floor( player->getYpos() / 16 );
+	if (flag == 0) {
+		int xold = player->getXseg();
+		int xnew = std::floor( player->getXpos() / 16 );
+		int yold = player->getYseg();
+		int ynew = std::floor( player->getYpos() / 16 );
 	
-	int xdif = xnew - xold;
-	int ydif = ynew - yold;
+		int xdif = xnew - xold;
+		int ydif = ynew - yold;
 	
-	if (xdif != 0) {
-		if (xdif < 0) {
+		if (xdif != 0) {
+			if (xdif < 0) {
 			
-			for (int i = 0; i > xdif; i--) {
-				std::vector< chunk* > holder = chunk_list.back();
-				chunk_list.pop_back();
-				auto iterator = chunk_list.begin();
-				chunk_list.insert(iterator, holder);
-				for (int i = 0; i < 9; i++) {
-					chunk_list.front()[i]->setFlag(1);
+				for (int i = 0; i > xdif; i--) {
+					std::vector< chunk* > holder = chunk_list.back();
+					chunk_list.pop_back();
+					auto iterator = chunk_list.begin();
+					chunk_list.insert(iterator, holder);
+					for (int i = 0; i < 9; i++) {
+						chunk_list.front()[i]->setFlag(1);
+					}
 				}
-			}
 			
-		} else {
+			} else {
 			
-			for (int i = 0; i < xdif; i++) {
-				std::vector< chunk* > holder = chunk_list.front();
-				auto iterator = chunk_list.begin();
-				chunk_list.erase(iterator);
-				chunk_list.push_back(holder);
-				for (int i = 0; i < 9; i++) {
-					chunk_list.back()[i]->setFlag(1);
+				for (int i = 0; i < xdif; i++) {
+					std::vector< chunk* > holder = chunk_list.front();
+					auto iterator = chunk_list.begin();
+					chunk_list.erase(iterator);
+					chunk_list.push_back(holder);
+					for (int i = 0; i < 9; i++) {
+						chunk_list.back()[i]->setFlag(1);
+					}
 				}
-			}
 			
+			}
 		}
-	}
 	
-	if (ydif != 0) {
-		if (ydif < 0) {
+		if (ydif != 0) {
+			if (ydif < 0) {
 			
-			for (int i = 0; i > ydif; i--) {
+				for (int i = 0; i > ydif; i--) {
 				
-				for (int i = 0; i < 9; i++) {
-					chunk* holder = chunk_list[i].back();
-					chunk_list[i].pop_back();
-					auto iterator = chunk_list[i].begin();
-					chunk_list[i].insert(iterator, holder);
-					chunk_list[i].front()->setFlag(1);
+					for (int i = 0; i < 9; i++) {
+						chunk* holder = chunk_list[i].back();
+						chunk_list[i].pop_back();
+						auto iterator = chunk_list[i].begin();
+						chunk_list[i].insert(iterator, holder);
+						chunk_list[i].front()->setFlag(1);
+					}
+				
 				}
-				
-			}
 			
-		} else {
+			} else {
 			
-			for (int i = 0; i < ydif; i++) {
+				for (int i = 0; i < ydif; i++) {
 				
-				for (int i = 0; i < 9; i++) {
-					chunk* holder = chunk_list[i].front();
-					auto iterator = chunk_list[i].begin();
-					chunk_list[i].erase(iterator);
-					chunk_list[i].push_back(holder);
-					chunk_list[i].back()->setFlag(1);
+					for (int i = 0; i < 9; i++) {
+						chunk* holder = chunk_list[i].front();
+						auto iterator = chunk_list[i].begin();
+						chunk_list[i].erase(iterator);
+						chunk_list[i].push_back(holder);
+						chunk_list[i].back()->setFlag(1);
+					}
+				
 				}
-				
-			}
 			
+			}
 		}
-	}
 	
-	if (xdif != 0 || ydif != 0) {
-		player->setXseg(xnew);
-		player->setYseg(ynew);
+		if (xdif != 0 || ydif != 0) {
+			player->setXseg(xnew);
+			player->setYseg(ynew);
+			flag = 1;
+		}
 	}
 }
 
 void chunkController::updateData (character* player) {
-	int playerxpos = std::floor( player->getXpos() / 16 );;
-	int playerypos = std::floor( player->getYpos() / 16 );
+	if (flag == 1) {
+		int playerxpos = std::floor( player->getXpos() / 16 );;
+		int playerypos = std::floor( player->getYpos() / 16 );
 	
-	dataConstructor(playerxpos, playerypos, chunk_list);
-	bufferConstructor(playerxpos, playerypos, chunk_list);
+		dataConstructor(playerxpos, playerypos, chunk_list);
+		bufferConstructor(playerxpos, playerypos, chunk_list);
+		
+		flag = 2;
+	}
 }
 
 void chunkController::updateBuffer () {
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			for (int k = 0; k < 8; k++) {
-				chunk_list[i][j]->getSeg(k)->updateGLBuffer();
+	if (flag == 2) {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (chunk_list[i][j]->getFlag() == 3) {
+					for (int k = 0; k < 8; k++) {
+						chunk_list[i][j]->getSeg(k)->updateGLBuffer();
+					}
+			
+				chunk_list[i][j]->setFlag(0);
+				}
 			}
 		}
+		
+		flag = 0;
 	}
 }
 
