@@ -156,7 +156,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 			this_thread::sleep_for( framerate - looptime );
 		}
 		
-		//cout << "Primary thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+		//cout << "Primary thread frame rate is: " << chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
     }
 }
 
@@ -180,7 +180,7 @@ void threadSecondary (GLFWwindow* window, chunkController* chunkController01, ch
 			this_thread::sleep_for( framerate - looptime );
 		}
 		
-		//cout << "Logic thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+		//cout << "Logic thread frame rate is: " << chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
     }
 }
 
@@ -206,7 +206,7 @@ void threadTertiary (GLFWwindow* window, chunkController* chunkController01, cha
 			this_thread::sleep_for( framerate - looptime );
 		}
 		
-		//cout << "Data thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+		//cout << "Data thread frame rate is: " << chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
     }
 }
 
@@ -225,13 +225,13 @@ int main(void)
 	
 	threadLogic.join();
 	threadData.join();
-	
-    glfwDestroyWindow(window);
     
     delete chunkController01;
     delete shader;
     delete player;
     delete engine_settings;
+	
+    glfwDestroyWindow(window);
 	
     glfwTerminate();
     exit(EXIT_SUCCESS);

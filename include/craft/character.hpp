@@ -29,6 +29,8 @@
 		glm::mat4 view;
 		glm::mat4 proj;
 		
+		glm::mat4 coll;
+		
 		frustum view_frustum;
 		plane planes[7];
 		

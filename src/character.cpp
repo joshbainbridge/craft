@@ -12,15 +12,15 @@
 
 void character::velocity () {
 	if (xdown == 1) {
-		xvel += 0.1f;
+		xvel += 0.2f;
 	} else if (xdown == -1) {
-		xvel -= 0.1f;
+		xvel -= 0.2f;
 	}
 
 	if (ydown == 1) {
-		yvel += 0.1f;
+		yvel += 0.2f;
 	} else if (ydown == -1) {
-		yvel -= 0.1f;
+		yvel -= 0.2f;
 	}
 
 	if (zdown == 1) {
@@ -29,7 +29,7 @@ void character::velocity () {
 	}
 	
 	zvel -= 0.5;
-
+	
 	if (xrdown == 1) {
 		if (xrot < 1.0f) {
 			xrvel += 0.01f;
@@ -84,55 +84,126 @@ void character::velocity () {
 }
 
 void character::collision (chunkController* chunkController01) {
-	int xsegment = std::floor( xpos / 16 );
-	int ysegment = std::floor( ypos / 16 );
-	int zsegment = std::floor( zpos / 16 );
+
+	int xplayer = std::floor( xpos / 16 );
+	int yplayer = std::floor( ypos / 16 );
+	int zplayer = std::floor( zpos / 16 );
 	
-	if (zsegment < 7 && zsegment > 0) {
-		std::vector< std::vector<chunk*> >* chunk_list = chunkController01->getChunkList();
-		segment* segment = (*chunk_list)[4][4]->getSeg(zsegment);
+	int xflag = 0;
+	int yflag = 0;
+	int zflag = 0;
 	
-		glm::vec3 abmaxVox;
-		glm::vec3 abminVox;
+	float interp;
 	
-		glm::vec3 abmax;
-		glm::vec3 abmin;
+	coll = glm::rotate(glm::mat4(1.0f), glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
+	coll = coll * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, yvel, zvel));
+
+	glm::vec3 abmaxVox;
+	glm::vec3 abminVox;
+
+	glm::vec3 abmax;
+	glm::vec3 abmin;
 	
-		for (int xvox = 0; xvox < 16; xvox++) {
-			for (int yvox = 0; yvox < 16; yvox++) {
-				for (int zvox = 0; zvox < 16; zvox++) {
-					if (segment->getData()[xvox][yvox][zvox] < 0) {
-						abmaxVox = glm::vec3(xsegment * 16 + xvox + 1, ysegment * 16 + yvox + 1, zsegment * 16 + zvox + 1);
-						abminVox = glm::vec3(xsegment * 16 + xvox, ysegment * 16 + yvox, zsegment * 16 + zvox);
+	for (int xborder = -1; xborder <= 1; xborder++) {
+		for (int yborder = -1; yborder <= 1; yborder++) {
+			for (int zborder = -1; zborder <= 1; zborder++) {
+				
+				int xsegment = xplayer + xborder;
+				int ysegment = yplayer + yborder;
+				int zsegment = zplayer + zborder;
+				
+				int xseginter = 0;
+				int yseginter = 0;
+				int zseginter = 0;
+				
+				abmaxVox = glm::vec3(xsegment * 16 + 16, ysegment * 16 + 16, zsegment * 16 + 16);
+				abminVox = glm::vec3(xsegment * 16, ysegment * 16, zsegment * 16);
+	
+				abmax = glm::vec3(xpos + coll[3][0] + size * 0.5, ypos + size * 0.5, zpos + size * 0.5);
+				abmin = glm::vec3(xpos + coll[3][0] - size * 0.5, ypos - size * 0.5, zpos - size * 0.5);
+	
+				if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
+				} else {
+					xseginter = 1;
+				}
+	
+				abmax = glm::vec3(xpos + size * 0.5, ypos + coll[3][1] + size * 0.5, zpos + size * 0.5);
+				abmin = glm::vec3(xpos - size * 0.5, ypos + coll[3][1] - size * 0.5, zpos - size * 0.5);
+	
+				if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
+				} else {
+					yseginter = 1;
+				}
+	
+				abmax = glm::vec3(xpos + size * 0.5, ypos + size * 0.5, zpos + coll[3][2] + size * 0.5);
+				abmin = glm::vec3(xpos - size * 0.5, ypos - size * 0.5, zpos + coll[3][2] - size * 0.5);
+	
+				if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
+				} else {
+					zseginter = 1;
+				}
+				
+				if (xseginter == 1 || yseginter == 1 || zseginter == 1) {
+					if (zsegment < 7 && zsegment > 0) {
+	
+						std::vector< std::vector<chunk*> >* chunk_list = chunkController01->getChunkList();
+						segment* segment = (*chunk_list)[4 + xborder][4 + yborder]->getSeg(zsegment);
+		
+						for (int xvox = 0; xvox < 16; xvox++) {
+							for (int yvox = 0; yvox < 16; yvox++) {
+								for (int zvox = 0; zvox < 16; zvox++) {
+									if (segment->getData()[xvox][yvox][zvox] < 0) {
+										for (int i = 0; i <= 5; i++) {
+											
+											interp = 1.0f / i + 1;
+											
+											abmaxVox = glm::vec3(xsegment * 16 + xvox + 1, ysegment * 16 + yvox + 1, zsegment * 16 + zvox + 1);
+											abminVox = glm::vec3(xsegment * 16 + xvox, ysegment * 16 + yvox, zsegment * 16 + zvox);
 						
-						abmax = glm::vec3(xpos + xvel + size * 0.5, ypos + size * 0.5, zpos + size * 0.5);
-						abmin = glm::vec3(xpos + xvel - size * 0.5, ypos - size * 0.5, zpos - size * 0.5);
+											abmax = glm::vec3(xpos + coll[3][0] * interp + size * 0.5, ypos + size * 0.5, zpos + size * 0.5);
+											abmin = glm::vec3(xpos + coll[3][0] * interp - size * 0.5, ypos - size * 0.5, zpos - size * 0.5);
 						
-						if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
-						} else {
-							xvel *= -1;
-						}
+											if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
+											} else {
+												xflag = 1;
+											}
 						
-						abmax = glm::vec3(xpos + size * 0.5, ypos + yvel + size * 0.5, zpos + size * 0.5);
-						abmin = glm::vec3(xpos - size * 0.5, ypos + yvel - size * 0.5, zpos - size * 0.5);
+											abmax = glm::vec3(xpos + size * 0.5, ypos + coll[3][1] * interp + size * 0.5, zpos + size * 0.5);
+											abmin = glm::vec3(xpos - size * 0.5, ypos + coll[3][1] * interp - size * 0.5, zpos - size * 0.5);
 						
-						if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
-						} else {
-							yvel *= -1;
-						}
+											if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
+											} else {
+												yflag = 1;
+											}
 						
-						abmax = glm::vec3(xpos + size * 0.5, ypos + size * 0.5, zpos + zvel + size * 0.5);
-						abmin = glm::vec3(xpos - size * 0.5, ypos - size * 0.5, zpos + zvel - size * 0.5);
+											abmax = glm::vec3(xpos + size * 0.5, ypos + size * 0.5, zpos + coll[3][2] * interp + size * 0.5);
+											abmin = glm::vec3(xpos - size * 0.5, ypos - size * 0.5, zpos + coll[3][2] * interp - size * 0.5);
 						
-						if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
-						} else {
-							zvel *= 0;
+											if (abmax[0] < abminVox[0] || abmaxVox[0] < abmin[0] || abmax[1] < abminVox[1] || abmaxVox[1] < abmin[1] || abmax[2] < abminVox[2] || abmaxVox[2] < abmin[2] ) {
+											} else {
+												zflag = 1;
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
+						
 			}
 		}
 	}
+	
+	if (xflag == 1)
+		xvel = 0.0f;
+
+	if (yflag == 1)
+		yvel = 0.0f;
+
+	if (zflag == 1)
+		zvel = 0.0f;
+	
 }
 
 void character::transform () {
@@ -143,6 +214,7 @@ void character::transform () {
 	view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
 	view = glm::rotate(view, glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
 	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, yvel, zvel));
+	
 	view = glm::rotate(view, glm::pi<float>() * xrot, glm::vec3(1, 0, 0));
 
 	xpos = view[3][0];

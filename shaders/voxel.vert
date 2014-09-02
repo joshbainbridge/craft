@@ -35,8 +35,8 @@ void main()
 	pos2 = pos1;
 	
 	theta = pos1[0] - camera[0];
-	cs = cos(M_PI * theta * -0.01);
-	sn = sin(M_PI * theta * -0.01);
+	cs = cos(M_PI * theta * -0.004);
+	sn = sin(M_PI * theta * -0.004);
 	pos1[0] = 0;
 	pos1[2] += 16;
 	pos2[0] = pos1[0] * cs - pos1[2] * sn;
