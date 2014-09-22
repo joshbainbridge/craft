@@ -2,11 +2,13 @@
 	#define SEGMENT
 	
 	#include <craft/platformSpecification.hpp>
+	#include <craft/octreeNode.hpp>
 
 	class segment {
 		float data[16][16][16];
+		octreeNode* octree;
 		
-		GLfloat buffer[16384];
+		GLfloat buffer[163840];
 		GLuint vbo;
 		int count;
 		
@@ -19,10 +21,12 @@
 			void render (GLuint, GLuint);
 			void setFlag (char);
 			void setCounter (int);
+			void setOctree (octreeNode*);
 			float (*getData())[16][16];
 			GLfloat* getBuffer ();
 			int getFlag ();
 			int getCounter ();
+			octreeNode* getOctree();
 	};
 	
 #endif

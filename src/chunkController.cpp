@@ -1,12 +1,61 @@
 #include <craft/chunkController.hpp>
 
-#include <craft/segment.hpp>
 #include <craft/simplex.hpp>
+#include <craft/octreeNode.hpp>
 
 #include <cmath>
 #include <iostream>
 
-void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
+octreeNode* chunkController::traverseTree(int x, int y, int z, int p) {
+	octreeNode* node = new octreeNode();
+	int size_1d = std::pow(2, p);
+	int size_3d = std::pow(size_1d, 3);
+	
+	int t;
+	if (data_buffer[x][y][z] > 0)
+		t = 1;
+	else
+		t = 2;
+	
+	int value = t;
+	
+	int xi, yi, zi;
+	int sample;
+	
+	for (int i = 0; i < size_3d; i++) {
+		xi = int( std::floor( std::floor( float(i) / size_1d ) / size_1d ) ) % size_1d;
+		yi = int( std::floor( float(i) / size_1d ) ) % size_1d;
+		zi = i % size_1d;
+		
+		if (data_buffer[x + xi][y + yi][z + zi] > 0)
+			sample = 1;
+		else
+			sample = 2;
+		
+		if (sample != t) {
+			value = 0;
+			break;
+		}
+	}
+	
+	if (value == 0) {
+		node->setValue(value);
+		node->setBranch(1, traverseTree( x, y, z, p - 1) );
+		node->setBranch(2, traverseTree( x + size_1d * 0.5, y, z, p - 1) );
+		node->setBranch(3, traverseTree( x, y + size_1d * 0.5, z, p - 1) );
+		node->setBranch(4, traverseTree( x + size_1d * 0.5, y + size_1d * 0.5, z, p - 1) );
+		node->setBranch(5, traverseTree( x, y, z + size_1d * 0.5, p - 1) );
+		node->setBranch(6, traverseTree( x + size_1d * 0.5, y, z + size_1d * 0.5, p - 1) );
+		node->setBranch(7, traverseTree( x, y + size_1d * 0.5, z + size_1d * 0.5, p - 1) );
+		node->setBranch(8, traverseTree( x + size_1d * 0.5, y + size_1d * 0.5, z + size_1d * 0.5, p - 1) );
+	} else {
+		node->setValue(value);
+	}
+	
+	return node;
+}
+
+void chunkController::dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
 	
 	segment* segment;
 	
@@ -47,13 +96,15 @@ void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<
 								);
 							
 								terrain += ( ( (float) zvox + (float) zpos * 16) - 64 ) / 64.0f;
-							
-								segment->getData()[xvox][yvox][zvox] = terrain;
+								
+								data_buffer[xvox][yvox][zvox] = terrain;
 							
 							}
 						}
 					}
-				
+					
+					segment->setOctree( traverseTree(0, 0, 0, 4) );
+					
 				}
 				
 			chunk_list[xseg][yseg]->setFlag(2);
@@ -63,7 +114,29 @@ void dataConstructor ( int playerxpos, int playerypos, std::vector< std::vector<
 	
 }
 
-void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
+void chunkController::sourceTree (octreeNode* node, int x, int y, int z, int p, int* count, segment* segment) {
+	int size_1d = std::pow(2, p);
+	
+	if ( node->getValue() == 0 ) {
+		sourceTree( node->getBranch(1), x, y, z, p - 1, count, segment );
+		sourceTree( node->getBranch(2), x + size_1d * 0.5, y, z, p - 1, count, segment );
+		sourceTree( node->getBranch(3), x, y + size_1d * 0.5, z, p - 1, count, segment );
+		sourceTree( node->getBranch(4), x + size_1d * 0.5, y + size_1d * 0.5, z, p - 1, count, segment );
+		sourceTree( node->getBranch(5), x, y, z + size_1d * 0.5, p - 1, count, segment );
+		sourceTree( node->getBranch(6), x + size_1d * 0.5, y, z + size_1d * 0.5, p - 1, count, segment );
+		sourceTree( node->getBranch(7), x, y + size_1d * 0.5, z + size_1d * 0.5, p - 1, count, segment );
+		sourceTree( node->getBranch(8), x + size_1d * 0.5, y + size_1d * 0.5, z + size_1d * 0.5, p - 1, count, segment );
+	} else if ( node->getValue() == 2 ) {
+		segment->getBuffer()[*count] = (float) x;
+		segment->getBuffer()[*count + 1] = (float) y;
+		segment->getBuffer()[*count + 2] = (float) z;
+		segment->getBuffer()[*count + 3] = (float) size_1d;
+		*count += 4;
+	}
+    
+}
+
+void chunkController::bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vector<chunk*> > chunk_list ) {
 	
 	segment* segment;
 	
@@ -90,26 +163,8 @@ void bufferConstructor ( int playerxpos, int playerypos, std::vector< std::vecto
 					//Set instance count to 0
 					count = 0;
 					
-					//Loop through each voxel establishing xvox, yvox and zvox
-					for (int xvox = 0; xvox < 16; xvox++) {
-						for (int yvox = 0; yvox < 16; yvox++) {
-							for (int zvox = 0; zvox < 16; zvox++) {
-								
-								//If current voxel is solid
-								if ( segment->getData()[xvox][yvox][zvox] < 0 ) {
-									
-									segment->getBuffer()[count] = (float) xvox + (float) xpos * 16.0f;
-									segment->getBuffer()[count + 1] = (float) yvox + (float) ypos * 16.0f;
-									segment->getBuffer()[count + 2] = (float) zvox + (float) zpos * 16.0f;
-									segment->getBuffer()[count + 3] = (float) 1.0f;
-									count += 4;
-									
-								}
-						
-						
-							}
-						}
-					}
+					//Build from octree
+					sourceTree(segment->getOctree(), xpos * 16, ypos * 16, zpos * 16, 4, &count, segment);
 					
 					//Set instance counter for segment
 					segment->setCounter(count);
@@ -137,6 +192,14 @@ chunkController::chunkController (character* player) {
 		for (int j = 0; j < 9; j++) {
 			chunk* contructed = new chunk();
 			chunk_list[i][j] = contructed;
+		}
+	}
+	
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			for (int k = 0; k < 16; k++) {
+				data_buffer[i][j][k] = 0.0f;
+			}
 		}
 	}
 	

@@ -50,6 +50,10 @@ void segment::setCounter (int input) {
 	count = input;
 }
 
+void segment::setOctree (octreeNode* input) {
+	octree = input;
+}
+
 float (*segment::getData())[16][16] {
 	return data;
 }
@@ -64,4 +68,8 @@ int segment::getFlag () {
 
 int segment::getCounter () {
 	return count;
+}
+
+octreeNode* segment::getOctree () {
+	return octree;
 }

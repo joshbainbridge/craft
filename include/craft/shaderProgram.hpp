@@ -7,6 +7,7 @@
 		GLuint vertex_shader;
 		GLuint fragment_shader;
 		GLuint program_id;
+		
 		public:
 			shaderProgram ();
 			shaderProgram (const char* vert_source_dir, const char* frag_source_dir);
