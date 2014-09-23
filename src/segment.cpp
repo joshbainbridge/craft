@@ -9,14 +9,6 @@ void segment::init () {
 	flag = 0;
 	count = 0;
 	
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			for (int k = 0; k < 16; k++) {
-				data[i][j][k] = 0.0f;
-			}
-		}
-	}
-	
 	for (int i = 0; i < 16384; i++) { 
 		buffer[i] = 0.0f;
 	}
@@ -52,10 +44,6 @@ void segment::setCounter (int input) {
 
 void segment::setOctree (octreeNode* input) {
 	octree = input;
-}
-
-float (*segment::getData())[16][16] {
-	return data;
 }
 
 GLfloat* segment::getBuffer () {

@@ -64,7 +64,6 @@ void chunkController::dataConstructor ( int playerxpos, int playerypos, std::vec
 	int zpos;
 	
 	float terrain;
-	float tunnel;
 	
 	//Loop through each segment establishing xseg, yseg and zseg
 	for (int xseg = 0; xseg < 9; xseg++) {

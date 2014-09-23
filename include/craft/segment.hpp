@@ -5,7 +5,6 @@
 	#include <craft/octreeNode.hpp>
 
 	class segment {
-		float data[16][16][16];
 		octreeNode* octree;
 		
 		GLfloat buffer[163840];
@@ -22,7 +21,6 @@
 			void setFlag (char);
 			void setCounter (int);
 			void setOctree (octreeNode*);
-			float (*getData())[16][16];
 			GLfloat* getBuffer ();
 			int getFlag ();
 			int getCounter ();
