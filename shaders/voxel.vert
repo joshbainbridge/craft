@@ -7,6 +7,7 @@ in vec3 coordinate;
 in float scale;
 
 out vec3 Color;
+out vec3 ec_pos;
 
 uniform mat4 view;
 uniform mat4 proj;
@@ -14,6 +15,7 @@ uniform mat4 proj;
 mat4 inverted;
 vec3 camera;
 float fog;
+vec3 gamma;
 
 float cs;
 float sn;
@@ -26,19 +28,31 @@ void main()
 	inverted = inverse(view);
 	camera = vec3(inverted[3][0], inverted[3][1], inverted[3][2]);
 	fog = ( distance(camera, coordinate) / 64 ) * -1 + 1;
-	Color = vec3(1 * ( sin(coordinate[0]*0.03) * 0.5 + 0.5 ), 1 * ( sin(coordinate[1]*0.02) * 0.5 + 0.5 ), 1 * ( sin(coordinate[2]*0.025) * 0.5 + 0.5 )) * fog;
-	Color = smoothstep(0, 1, Color * 2);
+	Color = vec3(1 * ( sin(coordinate[0]*0.03) * 0.5 + 0.5 ), 1 * ( sin(coordinate[1]*0.02) * 0.5 + 0.5 ), 1 * ( sin(coordinate[2]*0.025) * 0.5 + 0.5 ));
+	
+	if ( ( (view * vec4(coordinate, 1.0))[2] > -28 ) && ( (view * vec4(coordinate, 1.0))[2] < 0 ) ) {
+		Color = vec3(1, 0, 0);
+	}
+	
+	Color = Color * fog;
+	Color = smoothstep(0, 1, Color);
+	gamma = vec3(1.0/2.2, 1.0/2.2, 1.0/2.2);
+	Color = vec3(pow(Color.r, gamma.r), pow(Color.g, gamma.g), pow(Color.b, gamma.b));
 	
 	pos1 = (vertex * scale) + coordinate;
 	pos2 = pos1;
-	
+	/*
 	theta = pos1[0] - camera[0];
-	cs = cos(M_PI * theta * -0.01);
-	sn = sin(M_PI * theta * -0.01);
+	cs = cos(M_PI * theta * -0.004);
+	sn = sin(M_PI * theta * -0.004);
 	pos1[0] = 0;
+	pos1[2] += 16;
 	pos2[0] = pos1[0] * cs - pos1[2] * sn;
 	pos2[2] = pos1[0] * sn + pos1[2] * cs;
 	pos2[0] += camera[0];
+	pos2[2] -= 16;
+	*/
+	ec_pos = (view * vec4(pos2, 1.0)).xyz;
 	
     gl_Position = proj * view * vec4(pos2, 1.0);
 }

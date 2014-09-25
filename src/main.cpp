@@ -119,7 +119,7 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 	//Set Frame-rate
 	chrono::milliseconds framerate( 1000 / 60 );
 	
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	
     while (!glfwWindowShouldClose(window))
     {
