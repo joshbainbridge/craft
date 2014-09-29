@@ -30,8 +30,8 @@ void main()
 	fog = ( distance(camera, coordinate) / 64 ) * -1 + 1;
 	Color = vec3(1 * ( sin(coordinate[0]*0.03) * 0.5 + 0.5 ), 1 * ( sin(coordinate[1]*0.02) * 0.5 + 0.5 ), 1 * ( sin(coordinate[2]*0.025) * 0.5 + 0.5 ));
 	
-	if ( ( (view * vec4(coordinate, 1.0))[2] > -28 ) && ( (view * vec4(coordinate, 1.0))[2] < 0 ) ) {
-		Color = vec3(1, 0, 0);
+	if ( (view * vec4(coordinate[0] + (scale * 0.5), coordinate[1] + (scale * 0.5), coordinate[2] + (scale * 0.5), 1.0))[2] >= (25 + (scale * 0.5)) * -1 ) {
+		Color = vec3(0.5, 0.2, 0.2);
 	}
 	
 	Color = Color * fog;
@@ -39,7 +39,7 @@ void main()
 	gamma = vec3(1.0/2.2, 1.0/2.2, 1.0/2.2);
 	Color = vec3(pow(Color.r, gamma.r), pow(Color.g, gamma.g), pow(Color.b, gamma.b));
 	
-	pos1 = (vertex * scale) + coordinate;
+	pos1 = (vertex * scale * 0.999) + coordinate;
 	pos2 = pos1;
 	/*
 	theta = pos1[0] - camera[0];

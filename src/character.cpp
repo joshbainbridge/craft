@@ -63,8 +63,8 @@ void character::velocity () {
 			zrot = zrot + zrvel;
 		} else {
 			zrot = zlimitmax;
-			zlimitmax = zrot + 1.0f;
-			zlimitmin = zrot - 1.0f;
+			zlimitmax = zrot + 0.5f;
+			zlimitmin = zrot - 0.5f;
 			zrdown = 0;
 		}
 	}
@@ -75,8 +75,8 @@ void character::velocity () {
 			zrot = zrot + zrvel;
 		} else {
 			zrot = zlimitmin;
-			zlimitmax = zrot + 1.0f;
-			zlimitmin = zrot - 1.0f;
+			zlimitmax = zrot + 0.5f;
+			zlimitmin = zrot - 0.5f;
 			zrdown = 0;
 		}
 	}
@@ -95,7 +95,7 @@ void character::transform () {
 	ypos = view[3][1];
 	zpos = view[3][2];
 	
-	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip + 2));
+	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip));
 	p = glm::vec3(view[3][0], view[3][1], view[3][2]);
 	
 	view = glm::affineInverse(view);
@@ -192,8 +192,8 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	xrot = 0.5f;
 	zrot = 0.0f;
 	
-	zlimitmax = zrot + 1.0f;
-	zlimitmin = zrot - 1.0f;
+	zlimitmax = zrot + 0.5f;
+	zlimitmin = zrot - 0.5f;
 	xlimitmax = xrot + 0.25f;
 	xlimitmin = xrot - 0.25f;
 	
