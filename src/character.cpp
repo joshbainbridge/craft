@@ -95,7 +95,7 @@ void character::transform () {
 	ypos = view[3][1];
 	zpos = view[3][2];
 	
-	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip));
+	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, nclip + 0.5f));
 	p = glm::vec3(view[3][0], view[3][1], view[3][2]);
 	
 	view = glm::affineInverse(view);
@@ -177,7 +177,7 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	ratio = ratio_input;
 	nclip = 25.0f;
 	fclip = 80.0f;
-	scale = 9;
+	scale = 5;
 	
 	size = 1;
 	
