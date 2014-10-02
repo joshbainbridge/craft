@@ -1,4 +1,5 @@
 #include <craft/state.hpp>
 
-state::state () {
+state::state ()
+{
 }

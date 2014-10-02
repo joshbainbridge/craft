@@ -146,10 +146,13 @@ void chunkController::bufferConstructor ( int playerxpos, int playerypos, std::v
 	int count = 0;
 	
 	//Loop through each segment establishing xseg, yseg and zseg
-	for (int xseg = 0; xseg < 9; xseg++) {
-		for (int yseg = 0; yseg < 9; yseg++) {
+	for (int xseg = 0; xseg < 9; xseg++)
+	{
+		for (int yseg = 0; yseg < 9; yseg++)
+		{
 			if (chunk_list[xseg][yseg]->getFlag() == 2) {
-				for (int zseg = 0; zseg < 8; zseg++) {
+				for (int zseg = 0; zseg < 8; zseg++)
+				{
 				
 					//Set pointer to current segment
 					segment = chunk_list[xseg][yseg]->getSeg(zseg);
@@ -179,24 +182,31 @@ void chunkController::bufferConstructor ( int playerxpos, int playerypos, std::v
 	
 }
 
-chunkController::chunkController () {
+chunkController::chunkController ()
+{
 }
 
-chunkController::chunkController (character* player) {
+chunkController::chunkController (character* player)
+{
 	flag = 1;
 	
 	chunk_list.resize(9);
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < 9; i++)
+	{
 		chunk_list[i].resize(9);
-		for (int j = 0; j < 9; j++) {
+		for (int j = 0; j < 9; j++)
+		{
 			chunk* contructed = new chunk();
 			chunk_list[i][j] = contructed;
 		}
 	}
 	
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			for (int k = 0; k < 16; k++) {
+	for (int i = 0; i < 16; i++)
+	{
+		for (int j = 0; j < 16; j++)
+		{
+			for (int k = 0; k < 16; k++)
+			{
 				data_buffer[i][j][k] = 0.0f;
 			}
 		}
@@ -210,15 +220,19 @@ chunkController::chunkController (character* player) {
 	updateBuffer();
 }
 
-chunkController::~chunkController () {
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
+chunkController::~chunkController ()
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
 			delete chunk_list[i][j];
 		}
 	}
 }
 
-void chunkController::updateSegFlag (character* player) {
+void chunkController::updateSegFlag (character* player)
+{
 	if (flag == 0) {
 		int xold = player->getXseg();
 		int xnew = std::floor( player->getXpos() / 16 );
@@ -231,24 +245,28 @@ void chunkController::updateSegFlag (character* player) {
 		if (xdif != 0) {
 			if (xdif < 0) {
 			
-				for (int i = 0; i > xdif; i--) {
+				for (int i = 0; i > xdif; i--)
+				{
 					std::vector< chunk* > holder = chunk_list.back();
 					chunk_list.pop_back();
 					auto iterator = chunk_list.begin();
 					chunk_list.insert(iterator, holder);
-					for (int i = 0; i < 9; i++) {
+					for (int i = 0; i < 9; i++)
+					{
 						chunk_list.front()[i]->setFlag(1);
 					}
 				}
 			
 			} else {
 			
-				for (int i = 0; i < xdif; i++) {
+				for (int i = 0; i < xdif; i++)
+				{
 					std::vector< chunk* > holder = chunk_list.front();
 					auto iterator = chunk_list.begin();
 					chunk_list.erase(iterator);
 					chunk_list.push_back(holder);
-					for (int i = 0; i < 9; i++) {
+					for (int i = 0; i < 9; i++)
+					{
 						chunk_list.back()[i]->setFlag(1);
 					}
 				}
@@ -259,9 +277,11 @@ void chunkController::updateSegFlag (character* player) {
 		if (ydif != 0) {
 			if (ydif < 0) {
 			
-				for (int i = 0; i > ydif; i--) {
+				for (int i = 0; i > ydif; i--)
+				{
 				
-					for (int i = 0; i < 9; i++) {
+					for (int i = 0; i < 9; i++)
+					{
 						chunk* holder = chunk_list[i].back();
 						chunk_list[i].pop_back();
 						auto iterator = chunk_list[i].begin();
@@ -273,9 +293,11 @@ void chunkController::updateSegFlag (character* player) {
 			
 			} else {
 			
-				for (int i = 0; i < ydif; i++) {
+				for (int i = 0; i < ydif; i++)
+				{
 				
-					for (int i = 0; i < 9; i++) {
+					for (int i = 0; i < 9; i++)
+					{
 						chunk* holder = chunk_list[i].front();
 						auto iterator = chunk_list[i].begin();
 						chunk_list[i].erase(iterator);
@@ -296,7 +318,8 @@ void chunkController::updateSegFlag (character* player) {
 	}
 }
 
-void chunkController::updateData (character* player) {
+void chunkController::updateData (character* player)
+{
 	if (flag == 1) {
 		int playerxpos = std::floor( player->getXpos() / 16 );;
 		int playerypos = std::floor( player->getYpos() / 16 );
@@ -308,12 +331,16 @@ void chunkController::updateData (character* player) {
 	}
 }
 
-void chunkController::updateBuffer () {
+void chunkController::updateBuffer ()
+{
 	if (flag == 2) {
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
 				if (chunk_list[i][j]->getFlag() == 3) {
-					for (int k = 0; k < 8; k++) {
+					for (int k = 0; k < 8; k++)
+					{
 						chunk_list[i][j]->getSeg(k)->updateGLBuffer();
 					}
 			
@@ -326,13 +353,17 @@ void chunkController::updateBuffer () {
 	}
 }
 
-void chunkController::render (character* player, shaderVoxel* shader) {
+void chunkController::render (character* player, shaderVoxel* shader)
+{
 	int countin = 0;
 	int countout = 0;
 	
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			for (int k = 0; k < 8; k++) {
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			for (int k = 0; k < 8; k++)
+			{
 				if (player->frustumCheck(float( (player->getXseg() - 4 + i) * 16 + 8), float( (player->getYseg() - 4 + j) * 16 + 8), float(k * 16 + 8), 11.32f) == 1) {
 					chunk_list[i][j]->getSeg(k)->render(shader->getCoordAttrib(), shader->getScaleAttrib() );
 					countin++;

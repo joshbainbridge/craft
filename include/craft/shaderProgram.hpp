@@ -1,9 +1,10 @@
-#ifndef SHADERPROGRAM
-	#define SHADERPROGRAM
+#ifndef SHADERPROGRAM_H__
+	#define SHADERPROGRAM_H__
 	
 	#include <craft/platformSpecification.hpp>
 	
-	class shaderProgram {
+	class shaderProgram
+	{
 		GLuint vertex_shader;
 		GLuint fragment_shader;
 		GLuint program_id;

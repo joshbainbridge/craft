@@ -1,14 +1,13 @@
-#ifndef STATECONTROLLER
-	#define STATECONTROLLER
+#ifndef STATECONTROLLER_H__
+	#define STATECONTROLLER_H__
 	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/state.hpp>
 	
 	#include <vector>
-	using namespace std;
 
 	class stateController {
-		vector<state*> state_array;
+		std::vector<state*> state_array;
 		int active;
 		int flag;
 		

@@ -1,10 +1,11 @@
-#ifndef CHUNK
-	#define CHUNK
+#ifndef CHUNK_H__
+	#define CHUNK_H__
 	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/segment.hpp>
 
-	class chunk {
+	class chunk
+	{
 		segment segment_list[8];
 		int flag;
 		

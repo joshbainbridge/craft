@@ -1,10 +1,13 @@
-#ifndef PLANE
-	#define PLANE
+#ifndef PLANE_H__
+	#define PLANE_H__
 	
-	#define GLM_FORCE_RADIANS
+	#ifndef GLM_FORCE_RADIANS
+		#define GLM_FORCE_RADIANS
+	#endif
 	#include <glm/glm.hpp>
 
-	class plane {
+	class plane
+	{
 		glm::vec3 n;
 		float h;
 		

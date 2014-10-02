@@ -1,15 +1,18 @@
 #include <craft/segment.hpp>
 #include <iostream>
 
-segment::segment () {
+segment::segment ()
+{
 	init();
 }
 
-void segment::init () {
+void segment::init ()
+{
 	flag = 0;
 	count = 0;
 	
-	for (int i = 0; i < 16384; i++) { 
+	for (int i = 0; i < 16384; i++)
+	{ 
 		buffer[i] = 0.0f;
 	}
 	
@@ -19,14 +22,16 @@ void segment::init () {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void segment::updateGLBuffer () {
+void segment::updateGLBuffer ()
+{
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), NULL, GL_DYNAMIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(buffer), buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void segment::render (GLuint coordAttrib, GLuint scaleAttrib) {
+void segment::render (GLuint coordAttrib, GLuint scaleAttrib)
+{
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(coordAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*4, 0);
 	glVertexAttribPointer(scaleAttrib, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*4, (const void*) (sizeof(float)*3));
@@ -34,30 +39,37 @@ void segment::render (GLuint coordAttrib, GLuint scaleAttrib) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void segment::setFlag (char input) {
+void segment::setFlag (char input)
+{
 	flag = input;
 }
 
-void segment::setCounter (int input) {
+void segment::setCounter (int input)
+{
 	count = input;
 }
 
-void segment::setOctree (octreeNode* input) {
+void segment::setOctree (octreeNode* input)
+{
 	octree = input;
 }
 
-GLfloat* segment::getBuffer () {
+GLfloat* segment::getBuffer ()
+{
 	return buffer;
 }
 
-int segment::getFlag () {
+int segment::getFlag ()
+{
 	return flag;
 }
 
-int segment::getCounter () {
+int segment::getCounter ()
+{
 	return count;
 }
 
-octreeNode* segment::getOctree () {
+octreeNode* segment::getOctree ()
+{
 	return octree;
 }

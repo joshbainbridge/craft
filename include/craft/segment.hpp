@@ -1,10 +1,11 @@
-#ifndef SEGMENT
-	#define SEGMENT
+#ifndef SEGMENT_H__
+	#define SEGMENT_H__
 	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/octreeNode.hpp>
 
-	class segment {
+	class segment
+	{
 		octreeNode* octree;
 		
 		GLfloat buffer[163840];

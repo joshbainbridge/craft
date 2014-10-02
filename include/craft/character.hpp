@@ -1,5 +1,5 @@
-#ifndef CHARACTER
-	#define CHARACTER
+#ifndef CHARACTER_H__
+	#define CHARACTER_H__
 	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/plane.hpp>
@@ -10,8 +10,8 @@
 	class shaderVoxel;
 	class chunkController;
 	
-	struct frustum {
-		
+	struct frustum
+	{
 		glm::vec3 fc;
 		glm::vec3 ftl;
 		glm::vec3 ftr;
@@ -22,10 +22,10 @@
 		glm::vec3 ntr;
 		glm::vec3 nbl;
 		glm::vec3 nbr;
-		
 	};
 
-	class character {
+	class character
+	{
 		glm::mat4 view;
 		glm::mat4 proj;
 		

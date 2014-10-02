@@ -1,15 +1,19 @@
 #include <craft/shaderVoxel.hpp>
 
-shaderVoxel::shaderVoxel () {
+shaderVoxel::shaderVoxel ()
+{
 }
 
-shaderVoxel::shaderVoxel (character* player) {
+shaderVoxel::shaderVoxel (character* player)
+{
 	init (player);
 }
 
-void shaderVoxel::init (character* player) {
+void shaderVoxel::init (character* player)
+{
 	
-	GLfloat vertices_input[40] = {
+	GLfloat vertices_input[40] =
+	{
 		0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
 		1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
 		0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -20,11 +24,13 @@ void shaderVoxel::init (character* player) {
 		1.0f, 0.0f, 0.0f, 0.0f, 1.0f
 	};
 	
-	for (int i = 0; i < 40; i++) {
+	for (int i = 0; i < 40; i++)
+	{
 		vertices[i] = vertices_input[i];
 	}
 	
-	GLuint elements_input[36] = {
+	GLuint elements_input[36] =
+	{
 		0, 1, 2,
 		1, 2, 3,
 		4, 5, 6,
@@ -39,7 +45,8 @@ void shaderVoxel::init (character* player) {
 		2, 4, 6
 	};
 	
-	for (int i = 0; i < 36; i++) {
+	for (int i = 0; i < 36; i++)
+	{
 		elements[i] = elements_input[i];
 	}
 	
@@ -92,22 +99,27 @@ void shaderVoxel::init (character* player) {
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr( player->getProj() ));
 }
 
-void shaderVoxel::useProgram () {
+void shaderVoxel::useProgram ()
+{
 	glUseProgram(shader.getProg());
 }
 
-GLuint shaderVoxel::getUniView () {
+GLuint shaderVoxel::getUniView ()
+{
 	return uniView;
 }
 
-GLuint shaderVoxel::getUniProj () {
+GLuint shaderVoxel::getUniProj ()
+{
 	return uniProj;
 }
 
-GLuint shaderVoxel::getCoordAttrib () {
+GLuint shaderVoxel::getCoordAttrib ()
+{
 	return coordAttrib;
 }
 
-GLuint shaderVoxel::getScaleAttrib () {
+GLuint shaderVoxel::getScaleAttrib ()
+{
 	return scaleAttrib;
 }

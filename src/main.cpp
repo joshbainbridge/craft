@@ -13,12 +13,13 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
-using namespace std;
 
+//Need to find a way of making these local
 settings* engine_settings = new settings();
 character* player = new character(0.0f, 0.0f, 74.0f, engine_settings->getRatio());
 
-GLFWwindow* createWindow(settings* engine_settings) {
+GLFWwindow* createWindow(settings* engine_settings)
+{
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -80,28 +81,28 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         player->setZrdown( 1 );
 }
 
-void errorContext() {
+void errorContext()
+{
 	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		cout << "OpenGL error: " << error << endl;
+	if (error != GL_NO_ERROR) {
+		std::cout << "OpenGL error: " << error << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	
 	#ifdef _WIN32
-	glewExperimental = GL_TRUE;
-	GLenum glewinit = glewInit();
-	if (glewinit != GLEW_OK) {
-		cout << "Glew not okay: " << glewinit << endl;
-		exit(EXIT_FAILURE);
-	}
+		glewExperimental = GL_TRUE;
+		GLenum glewinit = glewInit();
+		if (glewinit != GLEW_OK) {
+			std::cout << "Glew not okay: " << glewinit << std::endl;
+			exit(EXIT_FAILURE);
+		}
 	#endif
 }
 
-GLFWwindow* init (settings* engine_settings, character* player) {
+GLFWwindow* init (settings* engine_settings, character* player)
+{
 	int err = glfwInit();
-    if (!err)
-	{
+    if (!err) {
         exit(EXIT_FAILURE);
 	}
 	
@@ -114,17 +115,17 @@ GLFWwindow* init (settings* engine_settings, character* player) {
 	return window;
 }
 
-void threadPrimary (GLFWwindow* window, chunkController* chunkController01, character* player, shaderVoxel* shader) {
-	
+void threadPrimary (GLFWwindow* window, chunkController* chunkController01, character* player, shaderVoxel* shader)
+{
 	//Set Frame-rate
-	chrono::milliseconds framerate( 1000 / 60 );
+	std::chrono::milliseconds framerate( 1000 / 60 );
 	
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	
-    while (!glfwWindowShouldClose(window))
+    while ( !glfwWindowShouldClose(window) )
     {
     	//Start Timer
-    	auto start_time = chrono::high_resolution_clock::now();
+    	auto start_time = std::chrono::high_resolution_clock::now();
 		
 		// Clearing Buffer
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -146,49 +147,47 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 		glfwPollEvents();
         
         //Sleep
-		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
-		if (looptime < framerate)
-		{
-			this_thread::sleep_for( framerate - looptime );
+		std::chrono::milliseconds looptime( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() );
+		if ( looptime < framerate ) {
+			std::this_thread::sleep_for( framerate - looptime );
 		}
 		
-		//cout << "Primary thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+		//std::cout << "Primary thread frame time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() << " ms" << std::endl;
     }
 }
 
-void threadSecondary (GLFWwindow* window, chunkController* chunkController01, character* player) {
-	
+void threadSecondary (GLFWwindow* window, chunkController* chunkController01, character* player)
+{	
 	//Set Frame-rate
-	chrono::milliseconds framerate( 1000 / 20 );
+	std::chrono::milliseconds framerate( 1000 / 20 );
 	
-    while (!glfwWindowShouldClose(window))
+    while ( !glfwWindowShouldClose(window) )
     {
     	//Start Timer
-    	auto start_time = chrono::high_resolution_clock::now();
+    	auto start_time = std::chrono::high_resolution_clock::now();
         
         //Update
         player->update(chunkController01);
 		
 		//Sleep
-		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
-		if (looptime < framerate)
-		{
-			this_thread::sleep_for( framerate - looptime );
+		std::chrono::milliseconds looptime( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() );
+		if ( looptime < framerate ) {
+			std::this_thread::sleep_for( framerate - looptime );
 		}
 		
-		//cout << "Logic thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+		//std::cout << "Logic thread frame time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() << " ms" << std::endl;
     }
 }
 
-void threadTertiary (GLFWwindow* window, chunkController* chunkController01, character* player) {
-	
+void threadTertiary (GLFWwindow* window, chunkController* chunkController01, character* player)
+{
 	//Set Frame-rate
-	chrono::milliseconds framerate( 1000 / 20 );
+	std::chrono::milliseconds framerate( 1000 / 20 );
 	
-    while (!glfwWindowShouldClose(window))
+    while ( !glfwWindowShouldClose(window) )
     {
     	//Start Timer
-    	auto start_time = chrono::high_resolution_clock::now();
+    	auto start_time = std::chrono::high_resolution_clock::now();
         
         
         //Update
@@ -196,13 +195,12 @@ void threadTertiary (GLFWwindow* window, chunkController* chunkController01, cha
 		chunkController01->updateData(player);
 		
 		//Sleep
-		chrono::milliseconds looptime( chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() );
-		if (looptime < framerate)
-		{
-			this_thread::sleep_for( framerate - looptime );
+		std::chrono::milliseconds looptime( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() );
+		if ( looptime < framerate ) {
+			std::this_thread::sleep_for( framerate - looptime );
 		}
 		
-		//cout << "Data thread frame rate is: " << 1000 / chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count() << endl;
+		//std::cout << "Data thread frame time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() << " ms" << std::endl;
     }
 }
 
@@ -214,8 +212,8 @@ int main(void)
 	
 	chunkController* chunkController01 = new chunkController(player);
 	
-	thread threadLogic(threadSecondary, window, chunkController01, player);
-	thread threadData(threadTertiary, window, chunkController01, player);
+	std::thread threadLogic(threadSecondary, window, chunkController01, player);
+	std::thread threadData(threadTertiary, window, chunkController01, player);
 	
 	threadPrimary(window, chunkController01, player, shader);
 	

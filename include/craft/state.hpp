@@ -1,10 +1,11 @@
-#ifndef STATE
-	#define STATE
+#ifndef STATE_H__
+	#define STATE_H__
 	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/settings.hpp>
 
-	class state {
+	class state
+	{
 		
 		protected:
 			GLFWwindow* window;

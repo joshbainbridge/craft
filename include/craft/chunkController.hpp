@@ -1,5 +1,5 @@
-#ifndef CHUNKCONTROLLER
-	#define CHUNKCONTROLLER
+#ifndef CHUNKCONTROLLER_H__
+	#define CHUNKCONTROLLER_H__
 	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/segment.hpp>
@@ -10,7 +10,8 @@
 	
 	#include <vector>
 
-	class chunkController {
+	class chunkController
+	{
 		std::vector< std::vector<chunk*> > chunk_list;
 		float data_buffer[16][16][16];
 		int flag;

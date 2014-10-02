@@ -1,9 +1,11 @@
 #include <craft/octreeNode.hpp>
 
-octreeNode::octreeNode () {
+octreeNode::octreeNode ()
+{
 }
 
-octreeNode::~octreeNode () {
+octreeNode::~octreeNode ()
+{
 	delete branch01;
 	delete branch02;
 	delete branch03;
@@ -14,16 +16,20 @@ octreeNode::~octreeNode () {
 	delete branch08;
 }
 
-void octreeNode::setValue (int value_input) {
+void octreeNode::setValue (int value_input)
+{
 	value = value_input;
 }
 
-int octreeNode::getValue () {
+int octreeNode::getValue ()
+{
 	return value;
 }
 
-void octreeNode::setBranch (int index, octreeNode* input_branch) {
-	switch (index) {
+void octreeNode::setBranch (int index, octreeNode* input_branch)
+{
+	switch (index)
+	{
 		case 1:
 			branch01 = input_branch;
 			break;
@@ -53,8 +59,10 @@ void octreeNode::setBranch (int index, octreeNode* input_branch) {
 	}
 }
 
-octreeNode* octreeNode::getBranch (int index) {
-	switch (index) {
+octreeNode* octreeNode::getBranch (int index)
+{
+	switch (index)
+	{
 		case 1:
 			return branch01;
 		case 2:

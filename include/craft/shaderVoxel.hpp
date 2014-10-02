@@ -1,5 +1,5 @@
-#ifndef SHADERVOXEL
-	#define SHADERVOXEL
+#ifndef SHADERVOXEL_H__
+	#define SHADERVOXEL_H__
 	
 	#include <craft/platformSpecification.hpp>
 	#include <craft/shaderProgram.hpp>
@@ -10,7 +10,8 @@
 	#include <glm/gtc/matrix_transform.hpp>
 	#include <glm/gtc/type_ptr.hpp>
 	
-	class shaderVoxel {
+	class shaderVoxel
+	{
 		
 		GLfloat vertices[40];
 		GLuint elements[36];

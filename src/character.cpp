@@ -10,7 +10,8 @@
 #include <cmath>
 #include <iostream>
 
-void character::velocity () {
+void character::velocity ()
+{
 	if (xdown == 1) {
 		xvel += 0.3f;
 	} else if (xdown == -1) {
@@ -82,10 +83,12 @@ void character::velocity () {
 	}
 }
 
-void character::collision () {
+void character::collision ()
+{
 }
 
-void character::transform () {
+void character::transform ()
+{
 	view = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
 	view = glm::rotate(view, glm::pi<float>() * -zrot, glm::vec3(0, 0, 1));
 	view = view * glm::translate(glm::mat4(1.0f), glm::vec3(xvel, yvel, zvel));
@@ -101,7 +104,8 @@ void character::transform () {
 	view = glm::affineInverse(view);
 }
 
-void character::frustumBuild () {
+void character::frustumBuild ()
+{
 	d = glm::vec3(0.0f, 0.0f, -1.0f);
 	
 	cs = cos(glm::pi<float>() * xrot);
@@ -154,7 +158,8 @@ void character::frustumBuild () {
 	planes[6].init(glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 10));
 }
 
-void character::setFlagAuto () {
+void character::setFlagAuto ()
+{
 	if ( xvel == 0 && yvel == 0 && zvel == 0 && xrvel == 0 && zrvel == 0 ) {
 		flag = 0;
 	} else {
@@ -162,10 +167,12 @@ void character::setFlagAuto () {
 	}
 }
 
-character::character () {
+character::character ()
+{
 }
 
-character::character (float xpos_input, float ypos_input, float zpos_input, float ratio_input) {
+character::character (float xpos_input, float ypos_input, float zpos_input, float ratio_input)
+{
 	xpos = xpos_input;
 	ypos = ypos_input;
 	zpos = zpos_input;
@@ -208,10 +215,12 @@ character::character (float xpos_input, float ypos_input, float zpos_input, floa
 	flag = 0;
 }
 
-void character::init () {
+void character::init ()
+{
 	transform();
 	
-	proj = glm::ortho(
+	proj = glm::ortho
+	(
 		-8.0f * scale,
 		8.0f * scale,
 		-8.0f * scale / ratio,
@@ -223,7 +232,8 @@ void character::init () {
 	frustumBuild();
 }
 
-void character::update (chunkController* chunkController01) {
+void character::update (chunkController* chunkController01)
+{
 	if (flag == 1) {
 		velocity();
 		
@@ -267,7 +277,8 @@ void character::update (chunkController* chunkController01) {
 	}
 }
 
-void character::updateUni(shaderVoxel* shader) {
+void character::updateUni(shaderVoxel* shader)
+{
 	if (flag == 2) {
 		glUniformMatrix4fv(shader->getUniView(), 1, GL_FALSE, glm::value_ptr( view ));
 		glUniformMatrix4fv(shader->getUniProj(), 1, GL_FALSE, glm::value_ptr( proj ));
@@ -275,7 +286,8 @@ void character::updateUni(shaderVoxel* shader) {
 	}
 }
 
-int character::frustumCheck (float x, float y, float z, float r) {
+int character::frustumCheck (float x, float y, float z, float r)
+{
 	glm::vec3 p(x, y, z);
 	int inside = 1;
 	
@@ -287,95 +299,117 @@ int character::frustumCheck (float x, float y, float z, float r) {
 	return inside;
 }
 
-void character::setXdown (int input) {
+void character::setXdown (int input)
+{
 	xdown = input;
 	flag = 1;
 }
 
-void character::setYdown (int input) {
+void character::setYdown (int input)
+{
 	ydown = input;
 	flag = 1;
 }
 
-void character::setZdown (int input) {
+void character::setZdown (int input)
+{
 	zdown = input;
 	flag = 1;
 }
 
-void character::setXseg (int input) {
+void character::setXseg (int input)
+{
 	xseg = input;
 }
 
-void character::setYseg (int input) {
+void character::setYseg (int input)
+{
 	yseg = input;
 }
 
-void character::setZrdown (int input) {
+void character::setZrdown (int input)
+{
 	zrdown = input;
 	flag = 1;
 }
 
-void character::setXrdown (int input) {
+void character::setXrdown (int input)
+{
 	xrdown = input;
 	flag = 1;
 }
 
-void character::setFov (float input) {
+void character::setFov (float input)
+{
 	fov = input;
 }
 
-void character::setNclip (float input) {
+void character::setNclip (float input)
+{
 	nclip = input;
 }
 
-void character::setFclip (float input) {
+void character::setFclip (float input)
+{
 	fclip = input;
 }
 
-void character::setFlag (int input) {
+void character::setFlag (int input)
+{
 	flag = input;
 }
 
-glm::mat4 character::getView () {
+glm::mat4 character::getView ()
+{
 	return view;
 }
 
-glm::mat4 character::getProj () {
+glm::mat4 character::getProj ()
+{
 	return proj;
 }
 
-float character::getXpos () {
+float character::getXpos ()
+{
 	return xpos;
 }
 
-float character::getYpos () {
+float character::getYpos ()
+{
 	return ypos;
 }
 
-float character::getZpos () {
+float character::getZpos ()
+{
 	return zpos;
 }
 
-int character::getXseg () {
+int character::getXseg ()
+{
 	return xseg;
 }
 
-int character::getYseg () {
+int character::getYseg ()
+{
 	return yseg;
 }
 
-float character::getFov () {
+float character::getFov ()
+{
 	return fov;
 }
 
-float character::getNclip () {
+float character::getNclip ()
+{
 	return nclip;
 }
 
-float character::getFclip () {
+float character::getFclip ()
+{
 	return fclip;
 }
 
-int character::getFlag () {
+int character::getFlag ()
+{
 	return flag;
 }

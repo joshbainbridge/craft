@@ -1,9 +1,10 @@
-#ifndef OCTREENODE
-	#define OCTREENODE
+#ifndef OCTREENODE_H__
+	#define OCTREENODE_H__
 	
 	class octreeNode;
 	
-	class octreeNode {
+	class octreeNode
+	{
 		int value;
 		
 		octreeNode* branch01;

@@ -1,7 +1,8 @@
-#ifndef SETTINGS
-	#define SETTINGS
+#ifndef SETTINGS_H__
+	#define SETTINGS_H__
 
-	class settings {
+	class settings
+	{
 		int resx;
 		int resy;
 		char cuda;
