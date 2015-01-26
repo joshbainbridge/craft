@@ -30,7 +30,8 @@ void main()
 	fog = ( distance(camera, coordinate) / 64 ) * -1 + 1;
 	Color = vec3(1 * ( sin(coordinate[0]*0.03) * 0.5 + 0.5 ), 1 * ( sin(coordinate[1]*0.02) * 0.5 + 0.5 ), 1 * ( sin(coordinate[2]*0.025) * 0.5 + 0.5 ));
 	
-	if ( (view * vec4(coordinate[0] + (scale * 0.5), coordinate[1] + (scale * 0.5), coordinate[2] + (scale * 0.5), 1.0))[2] >= (25 + 0.5 + (scale * 0.5)) * -1 ) {
+	if ( (view * vec4(coordinate[0] + (scale * 0.5), coordinate[1] + (scale * 0.5), coordinate[2] + (scale * 0.5), 1.0))[2] >= (25 + 0.5 + (scale * 0.5)) * -1 )
+	{
 		Color = vec3(0.5, 0.2, 0.2);
 	}
 	

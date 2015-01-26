@@ -6,7 +6,8 @@
 	
 	#include <vector>
 
-	class stateController {
+	class stateController
+	{
 		std::vector<state*> state_array;
 		int active;
 		int flag;

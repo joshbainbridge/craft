@@ -42,10 +42,10 @@ GLFWwindow* createWindow(settings* engine_settings)
 	return window;
 }
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
-    
 		
     if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
         player->setXdown( -1 );
@@ -65,14 +65,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		
     if ( (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) || (key == GLFW_KEY_UP && action == GLFW_RELEASE) )
         player->setYdown( 0 );
-    
 	
     if (key == GLFW_KEY_W && action == GLFW_PRESS)
         player->setXrdown( -1 );
 		
     if (key == GLFW_KEY_S && action == GLFW_PRESS)
         player->setXrdown( 1 );
-    
 	
     if (key == GLFW_KEY_D && action == GLFW_PRESS)
         player->setZrdown( -1 );
@@ -84,7 +82,8 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 void errorContext()
 {
 	GLenum error = glGetError();
-	if (error != GL_NO_ERROR) {
+	if (error != GL_NO_ERROR)
+	{
 		std::cout << "OpenGL error: " << error << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -92,7 +91,8 @@ void errorContext()
 	#ifdef _WIN32
 		glewExperimental = GL_TRUE;
 		GLenum glewinit = glewInit();
-		if (glewinit != GLEW_OK) {
+		if (glewinit != GLEW_OK)
+		{
 			std::cout << "Glew not okay: " << glewinit << std::endl;
 			exit(EXIT_FAILURE);
 		}
@@ -102,7 +102,8 @@ void errorContext()
 GLFWwindow* init (settings* engine_settings, character* player)
 {
 	int err = glfwInit();
-    if (!err) {
+    if (!err)
+    {
         exit(EXIT_FAILURE);
 	}
 	
@@ -122,38 +123,39 @@ void threadPrimary (GLFWwindow* window, chunkController* chunkController01, char
 	
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	
-    while ( !glfwWindowShouldClose(window) )
+  while ( !glfwWindowShouldClose(window) )
+  {
+    //Start Timer
+    auto start_time = std::chrono::high_resolution_clock::now();
+  
+    // Clearing Buffer
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // Update
+    player->updateUni(shader);
+    
+    chunkController01->updateBuffer();
+  
+    //Render
+    chunkController01->render(player, shader);
+    
+    // Swap Buffer
+    glfwSwapBuffers(window);
+
+    //Check Events
+    glfwPollEvents();
+      
+    //Sleep
+    std::chrono::milliseconds looptime( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() );
+    if ( looptime < framerate )
     {
-    	//Start Timer
-    	auto start_time = std::chrono::high_resolution_clock::now();
-		
-		// Clearing Buffer
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glEnable(GL_DEPTH_TEST);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		// Update
-		player->updateUni(shader);
-		
-		chunkController01->updateBuffer();
-		
-        //Render
-        chunkController01->render(player, shader);
-        
-        // Swap Buffer
-        glfwSwapBuffers(window);
-		
-		//Check Events
-		glfwPollEvents();
-        
-        //Sleep
-		std::chrono::milliseconds looptime( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() );
-		if ( looptime < framerate ) {
-			std::this_thread::sleep_for( framerate - looptime );
-		}
-		
-		//std::cout << "Primary thread frame time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() << " ms" << std::endl;
+      std::this_thread::sleep_for( framerate - looptime );
     }
+    
+    //std::cout << "Primary thread frame time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() << " ms" << std::endl;
+  }
 }
 
 void threadSecondary (GLFWwindow* window, chunkController* chunkController01, character* player)
@@ -171,7 +173,8 @@ void threadSecondary (GLFWwindow* window, chunkController* chunkController01, ch
 		
 		//Sleep
 		std::chrono::milliseconds looptime( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() );
-		if ( looptime < framerate ) {
+		if ( looptime < framerate )
+		{
 			std::this_thread::sleep_for( framerate - looptime );
 		}
 		
@@ -196,7 +199,8 @@ void threadTertiary (GLFWwindow* window, chunkController* chunkController01, cha
 		
 		//Sleep
 		std::chrono::milliseconds looptime( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count() );
-		if ( looptime < framerate ) {
+		if ( looptime < framerate )
+		{
 			std::this_thread::sleep_for( framerate - looptime );
 		}
 		

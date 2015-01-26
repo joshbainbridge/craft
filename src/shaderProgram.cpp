@@ -3,14 +3,14 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 std::string readFile(const char *filePath)
 {
     std::string content;
     std::ifstream fileStream(filePath, std::ios::in);
 
-    if(!fileStream.is_open()) {
+    if(!fileStream.is_open())
+    {
         std::cerr << "Could not read file " << filePath << ". File does not exist." << std::endl;
         return "";
     }
@@ -30,7 +30,7 @@ GLuint createShader (const char* source_dir, GLenum shader_type)
 {
 	GLuint shader = glCreateShader(shader_type);
 	
-	string shader_string = readFile(source_dir);
+	std::string shader_string = readFile(source_dir);
 	const char* source = shader_string.c_str();
 	
 	glShaderSource(shader, 1, &source, NULL);

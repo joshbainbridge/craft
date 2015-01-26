@@ -12,30 +12,44 @@
 
 void character::velocity ()
 {
-	if (xdown == 1) {
+	if (xdown == 1)
+	{
 		xvel += 0.3f;
-	} else if (xdown == -1) {
+	}
+	else if (xdown == -1)
+	{
 		xvel -= 0.3f;
 	}
 
-	if (ydown == 1) {
+	if (ydown == 1)
+	{
 		yvel += 0.3f;
-	} else if (ydown == -1) {
+	}
+	else if (ydown == -1)
+	{
 		yvel -= 0.3f;
 	}
 
-	if (zdown == 1) {
+	if (zdown == 1)
+	{
 		zvel += 0.3f;
-	} else if (zdown == -1) {
+	}
+	else if (zdown == -1)
+	{
 		zvel -= 0.3f;
 	}
 
-	if (xrdown == 1) {
-		if (xrot < 1.0f) {
+	if (xrdown == 1)
+	{
+		if (xrot < 1.0f)
+		{
 			xrvel += 0.01f;
-			if (xrot + xrvel < xlimitmax) {
+			if (xrot + xrvel < xlimitmax)
+			{
 				xrot = xrot + xrvel;
-			} else {
+			}
+			else
+			{
 				xrot = xlimitmax;
 				xlimitmax = xrot + 0.25f;
 				xlimitmin = xrot - 0.25f;
@@ -44,12 +58,17 @@ void character::velocity ()
 		}
 	}
 	
-	if (xrdown == -1) {
-		if (xrot > 0.0f) {
+	if (xrdown == -1)
+	{
+		if (xrot > 0.0f)
+		{
 			xrvel -= 0.01f;
-			if (xrot + xrvel > xlimitmin) {
+			if (xrot + xrvel > xlimitmin)
+			{
 				xrot = xrot + xrvel;
-			} else {
+			}
+			else
+			{
 				xrot = xlimitmin;
 				xlimitmax = xrot + 0.25f;
 				xlimitmin = xrot - 0.25f;
@@ -58,11 +77,15 @@ void character::velocity ()
 		}
 	}
 	
-	if (zrdown == 1) {
+	if (zrdown == 1)
+	{
 		zrvel += 0.01f;
-		if (zrot + zrvel < zlimitmax) {
+		if (zrot + zrvel < zlimitmax)
+		{
 			zrot = zrot + zrvel;
-		} else {
+		}
+		else
+		{
 			zrot = zlimitmax;
 			zlimitmax = zrot + 0.5f;
 			zlimitmin = zrot - 0.5f;
@@ -70,11 +93,15 @@ void character::velocity ()
 		}
 	}
 	
-	if (zrdown == -1) {
+	if (zrdown == -1)
+	{
 		zrvel -= 0.01f;
-		if (zrot + zrvel > zlimitmin) {
+		if (zrot + zrvel > zlimitmin)
+		{
 			zrot = zrot + zrvel;
-		} else {
+		}
+		else
+		{
 			zrot = zlimitmin;
 			zlimitmax = zrot + 0.5f;
 			zlimitmin = zrot - 0.5f;
@@ -160,9 +187,12 @@ void character::frustumBuild ()
 
 void character::setFlagAuto ()
 {
-	if ( xvel == 0 && yvel == 0 && zvel == 0 && xrvel == 0 && zrvel == 0 ) {
+	if ( xvel == 0 && yvel == 0 && zvel == 0 && xrvel == 0 && zrvel == 0 )
+	{
 		flag = 0;
-	} else {
+	}
+	else
+	{
 		flag = 1;
 	}
 }
@@ -234,7 +264,8 @@ void character::init ()
 
 void character::update (chunkController* chunkController01)
 {
-	if (flag == 1) {
+	if (flag == 1)
+	{
 		velocity();
 		
 		collision();
@@ -243,31 +274,36 @@ void character::update (chunkController* chunkController01)
 		
 		frustumBuild();
 		
-		if (xvel != 0) {
+		if (xvel != 0)
+		{
 			xvel *= 0.75;
 			if ( (xvel < 0.01f && xvel > 0.0f) || (xvel > -0.01f && xvel < 0.0f) )
 				xvel = 0; 
 		}
 		
-		if (yvel != 0) {
+		if (yvel != 0)
+		{
 			yvel *= 0.75;
 			if ( (yvel < 0.01f && yvel > 0.0f) || (yvel > -0.01f && yvel < 0.0f) )
 				yvel = 0; 
 		}
 		
-		if (zvel != 0) {
+		if (zvel != 0)
+		{
 			zvel *= 0.75;
 			if ( (zvel < 0.01f && zvel > 0.0f) || (zvel > -0.01f && zvel < 0.0f) )
 				zvel = 0; 
 		}
 		
-		if (zrvel != 0) {
+		if (zrvel != 0)
+		{
 			zrvel *= 0.9;
 			if ( (zrvel < 0.001f && zrvel > 0.0f) || (zrvel > -0.001f && zrvel < 0.0f) )
 				zrvel = 0; 
 		}
 	
-		if (xrvel != 0) {
+		if (xrvel != 0)
+		{
 			xrvel *= 0.5;
 			if ( (xrvel < 0.001f && xrvel > 0.0f) || (xrvel > -0.001f && xrvel < 0.0f) )
 				xrvel = 0; 
@@ -279,7 +315,8 @@ void character::update (chunkController* chunkController01)
 
 void character::updateUni(shaderVoxel* shader)
 {
-	if (flag == 2) {
+	if (flag == 2)
+	{
 		glUniformMatrix4fv(shader->getUniView(), 1, GL_FALSE, glm::value_ptr( view ));
 		glUniformMatrix4fv(shader->getUniProj(), 1, GL_FALSE, glm::value_ptr( proj ));
 		setFlagAuto();
@@ -291,7 +328,8 @@ int character::frustumCheck (float x, float y, float z, float r)
 	glm::vec3 p(x, y, z);
 	int inside = 1;
 	
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
+	{
 		if (planes[i].intersection(p, r) != 1)
 			inside = 0;
 	}

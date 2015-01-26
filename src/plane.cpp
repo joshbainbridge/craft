@@ -19,9 +19,12 @@ void plane::init (glm::vec3 a, glm::vec3 b, glm::vec3 p)
 int plane::intersection(glm::vec3 p, float r)
 {
 	//std::cout << ( glm::dot(p, n) + r - h ) << std::endl;
-	if ( ( glm::dot(p, n) + r - h ) > 0 ) {
+	if ( ( glm::dot(p, n) + r - h ) > 0 )
+	{
 		return 1;
-	} else {
+	}
+	else
+	{
 		return 0;
 	}
 }
