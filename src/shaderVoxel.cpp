@@ -55,7 +55,7 @@ void shaderVoxel::init (character* player)
     glBindVertexArray(vao);
     
 	// Shader
-	shader.init( "../craft-master/shaders/voxel.vert", "../craft-master/shaders/voxel.frag" );
+	shader.init( "shaders/voxel.vert", "shaders/voxel.frag" );
 	glUseProgram(shader.getProg());
 	
 	vertAttrib = glGetAttribLocation(shader.getProg(), "vertex");
