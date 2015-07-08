@@ -1,7 +1,7 @@
 Craft Game:
 =======
 
-This repository is for an indpendent and experemental game called Craft. It is experimental in both style and procedrual gameplay blending between two and three dimensional worlds with varying detail and colour. Techniques such as instancing, octree data structures and procedrual noise have been implemented. Currently the controls are just Arrows + WASD keys and the source should compile on Windows, Mac and Linux.
+This repository is my first exploration into programming with c++ and was created as an independent and experimental game called Craft. It is experimental in both style and procedural gameplay, blending between two and three dimensional worlds with varying detail and colour. Techniques such as instancing, octree structures and procedural noise are currently being used to create the environment although a character still needs to be added. The controls are just Arrows + WASD keys and the source should compile on most platform.
 
 ![Alt text](../readme-pictures/screenshot_01.png?raw=true)
 
